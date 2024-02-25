@@ -1,0 +1,47 @@
+
+$font-family-sans-serif:
+// Safari for OS X and iOS (San Francisco)
+-apple-system,
+// Chrome < 56 for OS X (San Francisco)
+BlinkMacSystemFont,
+// Windows
+"Segoe UI",
+// Android
+"Roboto",
+// Basic web fallback
+"Helvetica Neue", Arial, sans-serif,
+// Emoji fonts
+"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+
+$font: $font-family-sans-serif;
+
+$darkColor: #43464b;
+$pagePadding: 20px;
+$backgroundColor: #f8f8f8;
+$blue: #1a357a;
+$themeColor: #61dafb;
+$lightThemeColor: #fdb39b;
+$highlightedThemeColor: #f96300;
+$mediumTextColor: gray;
+$darkTextColor: DarkSlateGray;
+$white: white;
+$black: black;
+$green: #4ca952;
+$lightGrey: #e1e5ea;
+$grey: #dddddd;
+$appTopMargin: 90px;
+$siteFooterHeight: 24rem;
+$siteMobileFooterHeight: 42rem;
+$successBackgroundColor: #d4edda;
+$successForegroundColor: #155724;
+$infoBackgroundColor: #cce5ff;
+$infoForegroundColor: #004085;
+$dangerBackgroundColor: #f8d7da;
+$dangerForegroundColor: #711C24;
+
+$gray-darker:               #444444;
+$gray-dark:                 #696969;
+$gray:                      #999999;
+$gray-light:                #cccccc;
+$gray-lighter:              #ececec;
+$gray-lightest:             lighten($gray-lighter,4%);

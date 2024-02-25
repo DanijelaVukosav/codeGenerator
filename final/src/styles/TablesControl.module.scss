@@ -1,0 +1,221 @@
+//// @gray-darker:               #444444;
+//// @gray-dark:                 #696969;
+//// @gray:                      #999999;
+//// @gray-light:                #cccccc;
+//// @gray-lighter:              #ececec;
+//// @gray-lightest:             lighten(@gray-lighter,4%);
+//
+@import "../styles/variables";
+//
+//*,
+//*::before,
+//*::after {
+//  box-sizing: border-box;
+//}
+//
+//html {
+//  background-color: #f0f0f0;
+//}
+//
+//body {
+//  color: $gray;
+//  font-family: 'Roboto','Helvetica Neue', Helvetica, Arial, sans-serif;
+//  font-style: normal;
+//  font-weight: 400;
+//  letter-spacing: 0;
+//  padding: 1rem;
+//  text-rendering: optimizeLegibility;
+//  -webkit-font-smoothing: antialiased;
+//  -moz-osx-font-smoothing: grayscale;
+//  -moz-font-feature-settings: "liga" on;
+//}
+//
+//img {
+//  height: auto;
+//  max-width: 100%;
+//  vertical-align: middle;
+//}
+//
+//.btn {
+//  background-color: white;
+//  border: 1px solid $gray-light;
+//  //border-radius: 1rem;
+//  color: $gray-dark;
+//  padding: 0.5rem;
+//  text-transform: lowercase;
+//}
+//
+//.btn_block {
+//  display: block;
+//  width: 100%;
+//}
+//
+//.cards {
+//  display: flex;
+//  flex-wrap: wrap;
+//  list-style: none;
+//  margin: 0;
+//  padding: 0;
+//}
+//
+//.cards__item {
+//  display: flex;
+//  padding: 1rem;
+//  @media(min-width: 40rem) {
+//    width: 50%;
+//  }
+//  @media(min-width: 56rem) {
+//    width: 33.3333%;
+//  }
+//}
+//
+//.card {
+//  background-color: white;
+//  border-radius: 0.25rem;
+//  box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
+//  display: flex;
+//  flex-direction: column;
+//  overflow: hidden;
+//  &:hover {
+//    .card__image {
+//      filter: contrast(100%);
+//    }
+//  }
+//}
+//
+//.card__content {
+//  display: flex;
+//  flex: 1 1 auto;
+//  flex-direction: column;
+//  padding: 1rem;
+//}
+//
+//.card__image {
+//  background-position: center center;
+//  background-repeat: no-repeat;
+//  background-size: cover;
+//  border-top-left-radius: 0.25rem;
+//  border-top-right-radius: 0.25rem;
+//  filter: contrast(70%);
+//  //filter: saturate(180%);
+//  overflow: hidden;
+//  position: relative;
+//  transition: filter 0.5s cubic-bezier(.43,.41,.22,.91);;
+//  &::before {
+//    content: "";
+//	  display: block;
+//    padding-top: 56.25%; // 16:9 aspect ratio
+//  }
+//  @media(min-width: 40rem) {
+//    &::before {
+//      padding-top: 66.6%; // 3:2 aspect ratio
+//    }
+//  }
+//}
+//
+//.card__image_flowers {
+//  background-image: url(https://unsplash.it/800/600?image=82);
+//}
+//
+//.card__image_river {
+//  background-image: url(https://unsplash.it/800/600?image=11);
+//}
+//
+//.card__image_record {
+//  background-image: url(https://unsplash.it/800/600?image=39);
+//}
+//
+//.card__image_fence {
+//  background-image: url(https://unsplash.it/800/600?image=59);
+//}
+//
+//.card__title {
+//  color: $gray-dark;
+//  font-size: 1.25rem;
+//  font-weight: 300;
+//  letter-spacing: 2px;
+//  //text-transform: uppercase;
+//}
+//
+//.card__text {
+//  flex: 1 1 auto;
+//  font-size: 0.875rem;
+//  line-height: 1.5;
+//  margin-bottom: 1.25rem;
+//}
+//
+.tables_control {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+
+  background-image: linear-gradient(to left top, #61dafb 0%, #fff 100%);
+
+  h1 {
+    margin-bottom: 20px;
+  }
+
+  .container {
+    max-width: 1200px;
+    width: 100%;
+    text-align: center;
+  }
+
+
+  .card_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: initial;
+  }
+
+  .card h3 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .card h3 .icon {
+    margin-right: 10px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 5px;
+  }
+
+  label {
+    display: inline-block;
+    margin-left: 5px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+
+    div {
+      width: 100%;
+    }
+  }
+
+  input[type=checkbox]{
+    accent-color: #109aa0;
+  }
+
+}
