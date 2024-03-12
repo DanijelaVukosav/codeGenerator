@@ -18,6 +18,10 @@ public class Column {
     private boolean isPrimaryKey;
     private String defaultValue;
 
+    private Boolean isVisible = true;
+    private Boolean hasFilter = false;
+    private Boolean hasSort = false;
+
     public Column() {
     }
 
@@ -32,6 +36,9 @@ public class Column {
         this.tableName = tableName;
         this.isForеignKey = isForignKey;
         this.foreignTableName = foreignTableName;
+        this.isVisible = !isForignKey;
+        this.hasFilter = false;
+        this.hasSort = false;
     }
 
     public String getColumnName() {
@@ -144,5 +151,29 @@ public class Column {
     }
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public Boolean getVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(Boolean visible) {
+        isVisible = visible;
+    }
+
+    public Boolean getHasFilter() {
+        return hasFilter;
+    }
+
+    public void setHasFilter(Boolean hasFilter) {
+        this.hasFilter = hasFilter;
+    }
+
+    public Boolean getHasSort() {
+        return hasSort;
+    }
+
+    public void setHasSort(Boolean hasSort) {
+        this.hasSort = hasSort;
     }
 }

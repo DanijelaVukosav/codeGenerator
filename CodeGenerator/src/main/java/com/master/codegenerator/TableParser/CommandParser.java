@@ -45,6 +45,7 @@ public class CommandParser {
                 String columnName = substring;
                 Column foreignColumn = table.getColumn(columnName);
                 foreignColumn.setForеignKey(true);
+                foreignColumn.setVisible(false);
                 int indexOfReferences = columnString.toUpperCase().indexOf(UtilConstants.REFERENCES);
                 if (indexOfReferences >= 0) {
 
@@ -152,7 +153,7 @@ public class CommandParser {
 
     private static Column generateNewColumn(Table table, String tableName, String columnString, boolean isModify, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
         String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
-        String[] columnWords = columnString.split(UtilConstants.WORD_SEPARATOR);
+        String[] columnWords = columnString.trim().split(UtilConstants.WORD_SEPARATOR);
 
         Column column = table.getColumn(removeSpecialCharactersAndQuotation(columnWords[0].trim()));
 
@@ -187,6 +188,7 @@ public class CommandParser {
         if (columnUpperCase.contains(UtilConstants.FOREIGN_KEY)) {
             column.setIsForignKey(true);
             column.setForеignKey(true);
+            column.setVisible(false);
 
             for (int i = 0; i < columnWords.length; i++) {
                 if (columnWords[i].equals(UtilConstants.REFERENCES) && i < (columnWords.length - 1)) {
