@@ -1,10 +1,15 @@
-import { FC } from "react";
+import { FC, Suspense } from "react";
+import "./styles/home.css";
+import * as React from "react";
 
-export const Home: FC =()=> {
-    return (
-      <div id="page-wrap">
-        <h1>Dobrodošli!</h1>
+const Home: FC = () => {
+  return (
+    <Suspense>
+      <div className="home_container">
+        <img src={"/svg/dashboard.png"} alt={"DASHBOARD ICON"} />
       </div>
-    );
-    
-}
+    </Suspense>
+  );
+};
+
+export default Home;

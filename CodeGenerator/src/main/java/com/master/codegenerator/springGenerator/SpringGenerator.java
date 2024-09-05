@@ -7,17 +7,19 @@ import java.util.HashMap;
 
 public class SpringGenerator {
 
-    public void generateSpringApplication(HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships, String databaseName) {
+    public void generateSpringApplication(HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships, String schemaName) {
 
         try {
-            new GenericSpringFileGenerator(databaseName).copyGenericFiles();
+            GenericSpringFileGenerator springFileGenerator = new GenericSpringFileGenerator(schemaName);
+            springFileGenerator.copyGenericFiles(schemaName);
+            springFileGenerator.replaceSchemaNameInGenericFiles(schemaName, tables);
             for (Table table : tables.values()) {
-                TableSpringFileGenerator fileGenerator = new TableSpringFileGenerator(table, databaseName);
+                TableSpringFileGenerator fileGenerator = new TableSpringFileGenerator(table, schemaName, mapOfTableRelationships);
                 String tableName = StringUtils.firstLatterToUppercase(table.getTableName());
-                String[] genericFiles = {"Model.java", "Repository.java", "Service.java" , "Controller.java"};
+                String[] genericFiles = {"Model.java", "Repository.java", "Service.java", "Controller.java", "Specification.java"};
 
-                String[] filesForGenerating = {StringUtils.firstLatterToUppercase(tableName)+".java", StringUtils.firstLatterToUppercase(tableName)+"Repository.java",
-                        StringUtils.firstLatterToUppercase(tableName)+"Service.java",StringUtils.firstLatterToUppercase(tableName)+"Controller.java"};
+                String[] filesForGenerating = {StringUtils.firstLatterToUppercase(tableName) + ".java", StringUtils.firstLatterToUppercase(tableName) + "Repository.java",
+                        StringUtils.firstLatterToUppercase(tableName) + "Service.java", StringUtils.firstLatterToUppercase(tableName) + "Controller.java", StringUtils.firstLatterToUppercase(tableName) + "Specification.java"};
 
                 fileGenerator.generateFolderStructureOfTable();
 
@@ -27,6 +29,9 @@ public class SpringGenerator {
 
 
             }
+
+            GenericSpringFileGenerator.generateBuildGradleFile(schemaName, tables);
+            GenericSpringFileGenerator.generateSettingsGradleFile(schemaName, tables);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

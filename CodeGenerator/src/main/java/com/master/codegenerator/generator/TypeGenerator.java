@@ -27,9 +27,14 @@ public class TypeGenerator {
 		typesHashMap.put("NUMERIC", "number");
 		typesHashMap.put("FLOAT", "number");
 		typesHashMap.put("DOUBLE", "number");
+
+		typesHashMap.put("BOOL", "boolean");
+		typesHashMap.put("BOOLEAN", "boolean");
+
 		
 		typesHashMap.put("DATE", "Date");
-		typesHashMap.put("TIME", "string"); 
+		typesHashMap.put("TIME", "string");
+		typesHashMap.put("DATETIME", "Date");
 		typesHashMap.put("TIMESTAMP", "string"); 
 		
 		defaultValueOfType.put("CHAR", "\"\"");
@@ -55,6 +60,7 @@ public class TypeGenerator {
 		
 		defaultValueOfType.put("DATE", "new Date()");
 		defaultValueOfType.put("TIME", "00:00:00");
+		defaultValueOfType.put("DATETIME", "new Date()");
 		defaultValueOfType.put("TIMESTAMP", "new Date().toString()");
 		
 		mapSQLtypeToInputType.put("CHAR", "text");
@@ -63,7 +69,7 @@ public class TypeGenerator {
 		mapSQLtypeToInputType.put("VARBINARY", "text");
 		mapSQLtypeToInputType.put("BLOB", "text");
 		mapSQLtypeToInputType.put("TEXT", "text");
-		mapSQLtypeToInputType.put("ENUM", "text");
+		mapSQLtypeToInputType.put("ENUM", "enum");
 		mapSQLtypeToInputType.put("SET", "text");
 		
 		mapSQLtypeToInputType.put("BIT", "number");
@@ -77,10 +83,14 @@ public class TypeGenerator {
 		mapSQLtypeToInputType.put("NUMERIC", "number");
 		mapSQLtypeToInputType.put("FLOAT", "number");
 		mapSQLtypeToInputType.put("DOUBLE", "number");
+
+		mapSQLtypeToInputType.put("BOOL", "checkbox");
+		mapSQLtypeToInputType.put("BOOLEAN", "checkbox");
 		
 		mapSQLtypeToInputType.put("DATE", "date");
-		mapSQLtypeToInputType.put("TIME", "time"); 
-		mapSQLtypeToInputType.put("TIMESTAMP", "datetime-local"); 
+		mapSQLtypeToInputType.put("TIME", "time");
+		mapSQLtypeToInputType.put("DATETIME", "date_time");
+		mapSQLtypeToInputType.put("TIMESTAMP", "date_time");
 		
 		
 	}

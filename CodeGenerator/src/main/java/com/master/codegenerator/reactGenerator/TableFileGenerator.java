@@ -1,138 +1,261 @@
 package com.master.codegenerator.reactGenerator;
 
+import com.master.codegenerator.generator.ReplaceFunction;
 import com.master.codegenerator.models.Table;
-import com.master.codegenerator.reactUtils.ReplaceConst;
+import com.master.codegenerator.utils.GeneratorUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+
 public class TableFileGenerator {
-	private String componentsFolderName = "components";
-	private String serviceFolderName = "service";
-	public static String generatedAppsFolder = "GeneratedApps";
-	public String databaseName = "schema";
-	private String genericFolder = "FilesForGenerator" + File.separator + "src" + File.separator + "TableName";
+    public static final String REACT_APP = "react-app";
+    private final HashMap<String, ArrayList<String>> mapOfTableRelationships;
 
-	private String generateTableFolder;
-	private Table table;
+    public String databaseName = "schema";
+    private final String genericFolder;
 
-//	public TableFileGenerator(Table table) {
-//		this.generateTableFolder = generatedAppsFolder + File.separator + databaseName + File.separator + "src"
-//				+ File.separator + table.getTableName();
-//		File databaseFolder = new File(generatedAppsFolder + File.separator + databaseName + File.separator + "src");
-//		this.table=table;
-//		if (!databaseFolder.exists())
-//			databaseFolder.mkdirs(); // make directory for selected schema
-//	}
+    private final String generateTableFolder;
+    private final HashMap<String, Table> allTables;
+    private final Table table;
 
-	public TableFileGenerator(Table table, String databaseName) {
-		this.databaseName = databaseName;
-		this.generateTableFolder = generatedAppsFolder + File.separator + databaseName + File.separator + "src"
-				+ File.separator + table.getTableName();
-		File databaseFolder = new File(generatedAppsFolder + File.separator + databaseName + File.separator + "src");
-		this.table=table;
-		if (!databaseFolder.exists())
-			databaseFolder.mkdirs(); // make directory for selected schema
-	}
+    public TableFileGenerator(Table table, String databaseName, HashMap<String, ArrayList<String>> mapOfTableRelationships, HashMap<String, Table> addTables) throws IOException {
+        this.databaseName = databaseName;
+        this.table = table;
+        this.allTables = addTables;
+        this.mapOfTableRelationships = mapOfTableRelationships;
 
-	public void generateFolderStructureOfTable() {
-		File tableFolder = new File(getTableFolderPath());
-		if (!tableFolder.exists())
-			tableFolder.mkdirs(); // make directory for table
+        String reactRootPath = GeneratorUtils.getReactRootFolderPath(databaseName);
+        this.generateTableFolder = reactRootPath +
+                File.separator + "src" + File.separator + "pages"
+                + File.separator + table.getTableName();
+        File databaseFolder = new File(this.generateTableFolder);//reactRootPath + File.separator + "src"
 
-		File componentsFolder = new File(getComponentsFolderPath());
-		if (!componentsFolder.exists())
-			componentsFolder.mkdirs(); // make directory for components
+        if (!databaseFolder.exists())
+            databaseFolder.mkdirs(); // make directory for selected schema
 
-		File serviceFolder = new File(getServiceFolderPath());
-		if (!serviceFolder.exists())
-			serviceFolder.mkdirs(); // make directory for components
-	}
+        String genericFolderPath = GeneratorUtils.getReactTemplateTableFolderPath();
+        Resource genericFolderResource = new ClassPathResource(genericFolderPath);
+        this.genericFolder = genericFolderResource.getFile().getAbsolutePath();
+    }
 
-	public void generateFile(String genericFileName, String newFileName) {
+    public void generateFolderStructureOfTable() {
+        File tableFolder = new File(getTableFolderPath());
+        if (!tableFolder.exists())
+            tableFolder.mkdirs(); // make directory for table
 
-		File destFile = new File(getTableFolderPath() + File.separator + newFileName);
-		File sourceFile = new File(genericFolder + File.separator + genericFileName);
-		if (!destFile.exists()) {
-			try {
-				destFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+        File componentsFolder = new File(getComponentsFolderPath());
+        if (!componentsFolder.exists())
+            componentsFolder.mkdirs(); // make directory for components
 
-		try {
-			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
-			BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
+        File serviceFolder = new File(getServiceFolderPath());
+        if (!serviceFolder.exists())
+            serviceFolder.mkdirs(); // make directory for table service
 
-			String line;
+        File singlePageFolder = new File(getSinglePageFolderPath());
+        if (!singlePageFolder.exists())
+            singlePageFolder.mkdirs(); // make directory for single page components
+    }
 
-			while ((line = fileReader.readLine()) != null) {
-				ArrayList<String> codeLines = ReplaceConst.replaceGeneratorConstants(table, line);
-				for (String codeLine : codeLines) {
-					fileWriter.write(codeLine);
-					fileWriter.newLine();
-				}
+    public void generateFile(String genericFileName, String newFileName) {
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAa ovo je putanja react foldera "+ getTableFolderPath());
+        File destFile = new File(getTableFolderPath() + File.separator + newFileName);
+        File sourceFile = new File(genericFolder + File.separator + genericFileName);
+        if (!destFile.exists()) {
+            try {
+                destFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-			}
+        try {
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
+            BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
 
-			fileWriter.close();
-			fileReader.close();
+            String line;
 
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
+            while ((line = fileReader.readLine()) != null) {
+                ArrayList<String> codeLines = ReplaceReactPlaceholders.replaceGeneratorConstants(table, line, mapOfTableRelationships, allTables);
+                for (String codeLine : codeLines) {
+                    fileWriter.write(codeLine);
+                    fileWriter.newLine();
+                }
 
-	}
+            }
 
-	private String getComponentsFolderPath() {
-		return this.generateTableFolder + File.separator + componentsFolderName;
-	}
+            fileWriter.close();
+            fileReader.close();
 
-	private String getServiceFolderPath() {
-		return this.generateTableFolder + File.separator + serviceFolderName;
-	}
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
 
-	private String getTableFolderPath() {
-		return this.generateTableFolder;
-	}
+    }
 
-	public static void generateAppComponent(String databaseName, HashMap<String, Table> tables) {
-		File destFile = new File(generatedAppsFolder + File.separator + databaseName + File.separator + "src"
-				+ File.separator + "App.tsx");
-		File sourceFile = new File("FilesForGenerator" + File.separator + "src" + File.separator + "App.tsx");
-		if (!destFile.exists()) {
-			try {
-				destFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+    private String getComponentsFolderPath() {
+        String componentsFolderName = "components";
+        return this.generateTableFolder + File.separator + componentsFolderName;
+    }
 
-		try {
-			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
-			BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
+    private String getSinglePageFolderPath() {
+        String singlePageFolderName = "singlePage";
+        return this.generateTableFolder + File.separator + singlePageFolderName;
+    }
 
-			String line;
+    private String getServiceFolderPath() {
+        String serviceFolderName = "service";
+        return this.generateTableFolder + File.separator + serviceFolderName;
+    }
 
-			while ((line = fileReader.readLine()) != null) {
-				ArrayList<String> codeLines = ReplaceConst.replaceGeneratorAppConstants(line, tables);
-				for (String codeLine : codeLines) {
-					fileWriter.write(codeLine);
-					fileWriter.newLine();
-				}
+    private String getTableFolderPath() {
+        return this.generateTableFolder;
+    }
 
-			}
 
-			fileWriter.close();
-			fileReader.close();
+    public static void generateFile(String databaseName, String relativeSourcePath, String relativeDestPath, HashMap<String, Table> tables, ReplaceFunction replaceFunction) throws IOException {
+        File destFile = new File(GeneratorUtils.getReactRootFolderPath(databaseName) + File.separator + relativeDestPath);
 
-		} catch (IOException e) {
-			System.out.println("An error occurred of App component.");
-			e.printStackTrace();
-		}
-	}
+        Resource genericFolderResource = new ClassPathResource(relativeSourcePath);
+        String genericFolderAbsolutePath = genericFolderResource.getFile().getAbsolutePath();
+        File sourceFile = new File(genericFolderAbsolutePath);
+
+        if (!destFile.exists()) {
+            try {
+                destFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
+             BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile))) {
+
+            String line;
+
+            while ((line = fileReader.readLine()) != null) {
+                ArrayList<String> codeLines = replaceFunction.replaceReactPlaceholders(line, tables);
+                for (String codeLine : codeLines) {
+                    fileWriter.write(codeLine);
+                    fileWriter.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while generating the file.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void generateSystemApiRoutes(String databaseName, HashMap<String, Table> tables) throws IOException {
+        String relativeSourcePath = "ReactFileTemplates/src/api/apiRoutes.ts";
+        String relativeDestPath = File.separator + "src" + File.separator + "api" + File.separator + "apiRoutes.ts";
+        generateFile(databaseName, relativeSourcePath, relativeDestPath, tables, ReplaceReactPlaceholders::replaceSystemApiRoutesConstants);
+    }
+
+    public static void generateReactApplicationRoutes(String databaseName, HashMap<String, Table> tables) throws IOException {
+        String relativeSourcePath = "ReactFileTemplates/src/router/routes.ts";
+        String relativeDestPath = File.separator + "src" + File.separator + "router" + File.separator + "routes.ts";
+        generateFile(databaseName, relativeSourcePath, relativeDestPath, tables, ReplaceReactPlaceholders::replaceReactApplicationRoutesConstants);
+    }
+
+    public static void generateApplicationSidebar(String databaseName, HashMap<String, Table> tables) throws IOException {
+        String relativeSourcePath = "ReactFileTemplates/src/generalComponents/sidebar/SideBar.tsx";
+        String relativeDestPath = File.separator + "src" + File.separator + "generalComponents" + File.separator + "sidebar" + File.separator + "SideBar.tsx";
+        generateFile(databaseName, relativeSourcePath, relativeDestPath, tables, ReplaceReactPlaceholders::replaceApplicationSidebarConstants);
+    }
+
+    public static void generateApplicationPrivateRouter(String databaseName, HashMap<String, Table> tables) throws IOException {
+        String relativeSourcePath = "ReactFileTemplates/src/router/components/PrivateRouter.tsx";
+        String relativeDestPath = File.separator + "src" + File.separator + "router" + File.separator + "components" + File.separator + "PrivateRouter.tsx";
+        generateFile(databaseName, relativeSourcePath, relativeDestPath, tables, ReplaceReactPlaceholders::replaceApplicationPrivateRouterConstants);
+    }
+
+
+//    public static void generateAppComponent(String databaseName, HashMap<String, Table> tables) throws IOException {
+//        File destFile = new File(ReactUtils.getRootFolderPath(databaseName) + File.separator + "src"
+//                + File.separator + "App.tsx");
+//
+//        String genericFolderPath = "ReactFileTemplates" + File.separator + "src" + File.separator + "App.tsx";
+//        Resource genericFolderResource = new ClassPathResource(genericFolderPath);
+//        String genericFolderAbsolutePath = genericFolderResource.getFile().getAbsolutePath();
+//        File sourceFile = new File(genericFolderAbsolutePath);
+//
+//
+//        if (!destFile.exists()) {
+//            try {
+//                destFile.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        try {
+//            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
+//            BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
+//
+//            String line;
+//
+//            while ((line = fileReader.readLine()) != null) {
+//                ArrayList<String> codeLines = ReplaceConst.replaceGeneratorAppConstants(line, tables);
+//                for (String codeLine : codeLines) {
+//                    fileWriter.write(codeLine);
+//                    fileWriter.newLine();
+//                }
+//
+//            }
+//
+//            fileWriter.close();
+//            fileReader.close();
+//
+//        } catch (IOException e) {
+//            System.out.println("An error occurred of App component.");
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public static void generateSystemApiRoutes(String databaseName, HashMap<String, Table> tables) throws IOException {
+//        File destFile = new File(ReactUtils.getRootFolderPath(databaseName) + File.separator + "src"
+//                + File.separator + "api" + File.separator + "apiRoutes.ts");
+//
+//        String genericFolderPath = "ReactFileTemplates" + File.separator + "src"+ File.separator + "api" + File.separator + "apiRoutes.ts";
+//        Resource genericFolderResource = new ClassPathResource(genericFolderPath);
+//        String genericFolderAbsolutePath = genericFolderResource.getFile().getAbsolutePath();
+//        File sourceFile = new File(genericFolderAbsolutePath);
+//
+//
+//        if (!destFile.exists()) {
+//            try {
+//                destFile.createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        try {
+//            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
+//            BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
+//
+//            String line;
+//
+//            while ((line = fileReader.readLine()) != null) {
+//                ArrayList<String> codeLines = ReplaceConst.replaceSystemApiRoutedConstants(line, tables);
+//                for (String codeLine : codeLines) {
+//                    fileWriter.write(codeLine);
+//                }
+//            }
+//
+//            fileWriter.close();
+//            fileReader.close();
+//
+//        } catch (IOException e) {
+//            System.out.println("An error occurred of App component.");
+//            e.printStackTrace();
+//        }
+//    }
 
 }

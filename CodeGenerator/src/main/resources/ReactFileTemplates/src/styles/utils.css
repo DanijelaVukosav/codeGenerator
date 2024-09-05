@@ -1,0 +1,128 @@
+.padding-bottom-50 {
+    padding-bottom: 50px;
+}
+
+.padding-20 {
+    padding: 20px;
+}
+
+.margin-right-20 {
+    margin-right: 20px;
+}
+
+.margin-right-5 {
+    margin-right: 5px;
+}
+
+.margin-left-5 {
+    margin-left: 5px;
+}
+
+.full_width {
+    width: 100% !important;
+}
+
+.full_screen_width {
+    width: 100vw !important;
+}
+
+.middle_vertical_align {
+    vertical-align: middle !important;
+}
+
+.width_80px {
+    width: 80px;
+}
+
+
+.text_align_left {
+    text-align: left !important;
+}
+
+.add_button {
+    border: 3px solid var(--primary-button-background-color);
+    border-radius: 45px;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: var(--primary-button-background-color);
+    color: var(--primary-button-color);
+    font-size: 1em;
+    font-weight: 550;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 25px 8px 25px;
+    margin-left: 20px;
+}
+
+.add_button img {
+    margin-right: 5px;
+    color: red;
+}
+
+
+.add_button:hover {
+    background: var(--primary-button-background-color);
+    color: var(--primary-button-color);
+    font-size: 1.1em;
+}
+
+.flex_end {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.flex_center {
+    display: flex;
+    justify-content: center;
+}
+
+.text_align_center {
+    text-align: center;
+}
+
+.select {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+}
+
+.select_button {
+    background-color: var(--filter-field-dropdown-background);
+    color: var(--filter-field-dropdown-color);
+    border: 1px solid #ccc;
+    padding: 7px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.select_options {
+    z-index: 20;
+    position: absolute;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: var(--filter-field-dropdown-background);
+    color: var(--filter-field-dropdown-color);
+    border: 1px solid var(--modal-input-field-border-color);
+    border-radius: 7px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    overflow-y: auto;
+    max-height: 120px;
+}
+
+.option {
+    padding: 7px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.option:hover {
+    background-color: #f0f0f0;
+}
+
+.select.active .select_options {
+    display: block;
+}

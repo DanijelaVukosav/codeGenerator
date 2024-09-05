@@ -1,97 +1,168 @@
-import React, { useState, useRef, FC } from "react";
-import { useHistory } from "react-router-dom";
-import AuthService from "../loginService/auth.service";
-const required = (value:any) => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        This field is required!
-      </div>
-    );
-  }
-};
-export const Login: FC  = () => {
-  const history = useHistory();
+import React, { useState, FC } from "react";
+import { useNavigate } from "react-router-dom";
+
+import AuthService from "../authService/userService";
+import "../styles/login.css";
+import { useUser } from "../authService/UserProvider";
+import { useAbility } from "../router/casl/AbilityContext";
+import { HOME_ROUTE } from "../router/rotes";
+import { SystemUser } from "../authService/types";
+
+export const Login: FC = () => {
+  const { login } = useUser();
+  const { ability } = useAbility();
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
   const [message, setMessage] = useState("");
-  const onChangeUsername = (event:any) => {
-    const username = event.target.value;
-    setUsername(username);
+
+  const [isVisibleActivateForm, setVisibleActivateForm] = useState(false);
+  const [loginResponse, setLoginResponse] = useState<any>();
+
+  const loginUser = (userData: any) => {
+    const userWithRoles: SystemUser = {
+      ...userData,
+      can: userData.authorities.map((authority: string) => {
+        return { subject: authority, action: authority };
+      }),
+    };
+
+    ability.update(userWithRoles.can as any);
+    login(userWithRoles, { accessToken: userData.accessToken, refreshToken: userData.refreshToken });
   };
-  const onChangePassword = (event:any) => {
-    const password = event.target.value;
-    setPassword(password);
-  };
-  const handleLogin = (event:any) => {
+  const handleLogin = (event: any) => {
     event.preventDefault();
     setMessage("");
-    setLoading(true);
-      AuthService.login(username, password).then(
-        () => {
-          history.push("/profile");
-          window.location.reload();
-        },
-        (error) => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-          setLoading(false);
-          setMessage(resMessage);
+    AuthService.login(username, password).then(
+      (response) => {
+        if (response.activate) {
+          loginUser(response);
+          navigate(HOME_ROUTE);
+        } else {
+          setLoginResponse(response);
+          setVisibleActivateForm(true);
         }
-      );
+      },
+      (error) => {
+        const resMessage = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+        setMessage(resMessage);
+      },
+    );
   };
+  const handleActivate = (event: any) => {
+    event.preventDefault();
+    setMessage("");
+    AuthService.activateAccount(newPassword, loginResponse?.id, loginResponse?.accessToken).then(
+      () => {
+        loginUser({ ...loginResponse, activate: true });
+
+        navigate(HOME_ROUTE);
+      },
+      (error) => {
+        const resMessage = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+        setMessage(resMessage);
+      },
+    );
+  };
+
   return (
-    <div className="col-md-12">
-      <div className="card card-container">
-        <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-          alt="profile-img"
-          className="profile-img-card"
-        />
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              value={username}
-              onChange={onChangeUsername}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              value={password}
-              onChange={onChangePassword}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <button className="btn btn-primary btn-block" disabled={loading} onClick={handleLogin}>
-              {loading && (
-                <span className="spinner-border spinner-border-sm"></span>
-              )}
-              <span>Login</span>
-            </button>
-          </div>
-          {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
-              </div>
+    <div className="login_form_wrapper">
+      <div className="login_form_container">
+        <div className="logo_container">
+          <img src={"/svg/login-icon1.png"} alt={"LOGIN ICON"} />
+        </div>
+        {!isVisibleActivateForm ? (
+          <React.Fragment>
+            <div className="title_container">
+              <p className="title">Login to your Account</p>
             </div>
-          )}
+            <br />
+            <div className="input_container">
+              <label className="input_label" htmlFor="email_field">
+                Username
+              </label>
+              <img src={"/svg/login-username.png"} alt={"username"} />
+              <input
+                placeholder="username"
+                title="Inpit title"
+                name="username"
+                type="text"
+                className="input_field"
+                id="email_field"
+                onChange={(event) => setUsername(event.target.value)}
+              />
+            </div>
+            <div className="input_container">
+              <label className="input_label" htmlFor="password_field">
+                Password
+              </label>
+              <img src={"/svg/login-password.png"} alt={"password"} />
+              <input
+                placeholder="******"
+                title="Inpit title"
+                name="password"
+                type="password"
+                className="input_field"
+                id="password_field"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </div>
+            {message && <p style={{ color: "#dc3545" }}>{message}</p>}
+            <button title="Sign In" type="submit" className="sign-in_btn" onClick={handleLogin} disabled={!username || !password}>
+              <span>Sign In</span>
+            </button>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <div className="title_container">
+              <p className="title">Set new password!</p>
+            </div>
+            <br />
+            <div className="input_container">
+              <label className="input_label" htmlFor="newPassword">
+                New password
+              </label>
+              <img src={"/svg/new-password.svg"} alt={"new pass"} />
+              <input type="password" name="fakePassword" style={{ display: "none" }} />
+              <input
+                placeholder="******"
+                title="Inpit title"
+                name="newPassword"
+                type="password"
+                className="input_field"
+                id="newPassword"
+                autoComplete="new-password"
+                onChange={(event) => setNewPassword(event.target.value)}
+              />
+            </div>
+            <div className="input_container">
+              <label className="input_label" htmlFor="confirmNewPassword">
+                Password
+              </label>
+              <img src={"/svg/new-password.svg"} alt={"password"} />
+              <input type="password" name="fakePassword" style={{ display: "none" }} />
+              <input
+                placeholder="*******"
+                title="Inpit title"
+                name="confirmNewPassword"
+                type="password"
+                className="input_field"
+                id="confirmNewPassword"
+                autoComplete="new-password"
+                onChange={(event) => setConfirmNewPassword(event.target.value)}
+              />
+            </div>
+            {message && <p style={{ color: "#dc3545" }}>{message}</p>}
+            <button title="Sign In" type="submit" className="sign-in_btn" onClick={handleActivate} disabled={newPassword !== confirmNewPassword}>
+              <span>Change password</span>
+            </button>
+          </React.Fragment>
+        )}
       </div>
     </div>
   );
 };
-export default Login;

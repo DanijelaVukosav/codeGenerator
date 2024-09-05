@@ -13,21 +13,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class ParseSQLFile {
 
     @PostMapping("/upload")
-    public ResponseEntity<SchemaData>  uploadData(@RequestParam("sqlFile") MultipartFile file) { //, @RequestParam("roles") List<String> strings
-        // Obrada datoteke
+    public ResponseEntity<SchemaData>  uploadData(@RequestParam("sqlFile") MultipartFile file) {
         if (!file.isEmpty()) {
-            StringBuilder databaseName = new StringBuilder("");
+            StringBuilder databaseName = new StringBuilder();
             HashMap<String, Table> tables = new HashMap<>();
 
             HashMap<String, ArrayList<String>> mapOfTableRelationships = new HashMap<String, ArrayList<String>>();
-
-
 
             if(databaseName.isEmpty())
                 databaseName.append("schema");
@@ -37,7 +33,6 @@ public class ParseSQLFile {
 
                 return new ResponseEntity<>(new SchemaData(tables, mapOfTableRelationships, databaseName.toString()), HttpStatus.OK);
             } catch (IOException e) {
-                e.printStackTrace();
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }

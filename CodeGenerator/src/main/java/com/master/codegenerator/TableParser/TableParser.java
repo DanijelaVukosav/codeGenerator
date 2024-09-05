@@ -5,10 +5,10 @@ import com.master.codegenerator.models.Table;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class TableParser {
 
-    public static String databaseSchemaName = "schema";
     public static HashMap<String, Table> tables = new HashMap<String, Table>();
 
     //Key - tableName, value - array of tables where tableName is foreign key
@@ -16,13 +16,14 @@ public class TableParser {
 
     public static String commandSeparator = ";";
 
+    public static String commentSeparator = "--";
+
     public TableParser() {
     }
 
     private static ArrayList<String> readFile(BufferedReader bufferReader) {
         ArrayList<String> lines = new ArrayList<>();
         try {
-
             String line;
             while ((line = bufferReader.readLine()) != null) {
                 lines.add(line);
@@ -40,17 +41,19 @@ public class TableParser {
     private static ArrayList<String> readCommandsFromFile(BufferedReader bufferReader) {
         ArrayList<String> lines = readFile(bufferReader);
 
-        ArrayList<String> ddlComands = new ArrayList<>();
+        ArrayList<String> delCommands = new ArrayList<>();
 
         String command = "";
         for (String line : lines) {
-            if (line.startsWith(commandSeparator) && command != "") {
-                ddlComands.add(command.trim());
+            if (line.startsWith(commandSeparator) && !Objects.equals(command, "")) {
+                delCommands.add(command.trim());
                 if (command.equals(commandSeparator)) {
                     command = "";
                 } else {
                     command = command.substring(1);
                 }
+            } else if (line.startsWith(commentSeparator)) {
+//                command += line;
             } else if (!line.contains(commandSeparator)) {
                 command += line;
             } else {
@@ -58,14 +61,14 @@ public class TableParser {
                 int numberOfCommands = lineParts.length == 1 || line.endsWith(commandSeparator) ? lineParts.length : (lineParts.length - 1);
                 for (int i = 0; i < numberOfCommands; i++) {
                     command += " " + lineParts[i].trim();
-                    ddlComands.add(command.trim());
+                    delCommands.add(command.trim());
                     command = "";
                 }
                 command = numberOfCommands == lineParts.length ? "" : lineParts[numberOfCommands];
             }
 
         }
-        return ddlComands;
+        return delCommands;
     }
 
 
@@ -74,15 +77,11 @@ public class TableParser {
 
         for (String command : commands) {
             CommandParser.parseCommand(command, tables, mapOfTableRelationships, databaseName);
-//            System.out.println(command);
         }
-
-
     }
 
     private static Integer numberOfCommandSeparators(String command) {
         Integer chCount = 0;
-        System.out.println("CCCCCCCCCCCCCCCCCCCCCCc");
         for (int i = 0; i < command.length(); i++) {
             if (command.charAt(i) == commandSeparator.charAt(0)) {
                 chCount++;

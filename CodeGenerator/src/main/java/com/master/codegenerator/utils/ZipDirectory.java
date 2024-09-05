@@ -13,7 +13,6 @@ public class ZipDirectory {
         ZipOutputStream zipOut = new ZipOutputStream(fos);
 
         File fileToZip = new File(sourcePath);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         zipFile(fileToZip, fileToZip.getName(), zipOut);
         zipOut.close();
         fos.close();
@@ -32,8 +31,10 @@ public class ZipDirectory {
                 zipOut.closeEntry();
             }
             File[] children = fileToZip.listFiles();
-            for (File childFile : children) {
-                zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+            if (children != null) {
+                for (File childFile : children) {
+                    zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+                }
             }
             return;
         }

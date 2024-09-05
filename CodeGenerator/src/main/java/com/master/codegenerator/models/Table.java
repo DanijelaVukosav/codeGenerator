@@ -8,6 +8,10 @@ public class Table {
     private HashMap<String, Column> columnsMap;
     private String tableName;
 
+    private boolean hasTableAudit = false;
+
+    private Permission permissions;
+
     public Table() {
         super();
         columns = new ArrayList<Column>();
@@ -50,4 +54,19 @@ public class Table {
         this.columnsMap = columnsMap;
     }
 
+    public Permission getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Permission permissions) {
+        this.permissions = permissions;
+    }
+
+    public boolean getHasTableAudit() {
+        return hasTableAudit;
+    }
+
+    public void setHasTableAudit(boolean hasTableAudit) {
+        this.hasTableAudit = hasTableAudit;
+    }
 }

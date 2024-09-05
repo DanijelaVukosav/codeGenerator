@@ -1,6 +1,7 @@
 package com.master.codegenerator.TableParser;
 
 import com.master.codegenerator.models.Column;
+import com.master.codegenerator.models.Permission;
 import com.master.codegenerator.models.Table;
 
 import java.util.ArrayList;
@@ -10,54 +11,40 @@ import static com.master.codegenerator.models.SQLCommand.*;
 
 public class CommandParser {
 
-
-    private static Table parseCommand_CreateTable(String command, HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
+    private static void parseCommand_CreateTable(String command, HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
         Table table = new Table();
 
         String[] commandWords = command.split(UtilConstants.WORD_SEPARATOR);
         String tableName = removeSpecialCharactersAndQuotation(commandWords[2].replace("(", ""));
         table.setTableName(tableName);
 
-        System.out.println("Table name: " + tableName);
-
         String columns = command.substring(command.indexOf("(") + 1, command.lastIndexOf(")"));
 
         String[] columnsArray = columns.split(",");
 
         for (String columnString : columnsArray) {
-            System.out.println("Column string: " + columnString);
-
             String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
 
-            System.out.println("Column : " + columnUpperCase + "   ->      " + UtilConstants.PRIMARY_KEY);
+            String substring = columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")"));
 
             if (columnUpperCase.startsWith(UtilConstants.PRIMARY_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.PRIMARY_KEY))) {
-                System.out.println("Starts");
-                String substring = columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")"));
                 String[] primaryKeyColumns = substring.split(",");
 
                 for (String primaryKey : primaryKeyColumns) {
-                    System.out.println(primaryKey);
                     table.getColumn(removeSpecialCharactersAndQuotation(primaryKey)).setPrimaryKey(true);
                 }
             } else if (columnUpperCase.startsWith(UtilConstants.FOREIGN_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.FOREIGN_KEY))) {
-                String substring = columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")"));
-                String columnName = substring;
-                Column foreignColumn = table.getColumn(columnName);
-                foreignColumn.setForеignKey(true);
+                Column foreignColumn = table.getColumn(substring);
+                foreignColumn.setForeignKey(true);
                 foreignColumn.setVisible(false);
                 int indexOfReferences = columnString.toUpperCase().indexOf(UtilConstants.REFERENCES);
                 if (indexOfReferences >= 0) {
-
-                    String foreignTableName = columnString.substring(indexOfReferences).split("\\(")[0].replace(UtilConstants.REFERENCES, "").trim();
+                    String referenceSubstring = columnString.substring(indexOfReferences);
+                    String foreignTableName = referenceSubstring.split("\\(")[0].replace(UtilConstants.REFERENCES, "").trim();
+                    String referencedColumnName = referenceSubstring.substring(referenceSubstring.indexOf("(") + 1, referenceSubstring.indexOf(")")).trim();
                     foreignColumn.setForeignTableName(foreignTableName);
-//                    if (TableParser.mapOfTableRelationships.containsKey(foreignTableName)) {
-//                        TableParser.mapOfTableRelationships.get(foreignTableName).add(tableName);
-//                    } else {
-//                        ArrayList<String> newList = new ArrayList<String>();
-//                        newList.add(tableName);
-//                        TableParser.mapOfTableRelationships.put(foreignTableName, newList);
-//                    }
+                    foreignColumn.setForeignColumnName(referencedColumnName);
+
                     if (mapOfTableRelationships.containsKey(foreignTableName)) {
                         mapOfTableRelationships.get(foreignTableName).add(tableName);
                     } else {
@@ -74,22 +61,20 @@ public class CommandParser {
             }
         }
 
+//        ArrayList<String> defaultPermission = new ArrayList<>();
+//        defaultPermission.add("ADMIN");
+//        table.setPermissions(new Permission(defaultPermission));
 
-        //TableParser.tables.put(tableName, table);
         tables.put(tableName, table);
-        return table;
     }
 
     private static void parseCommand_AlterTable(String command, HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
-
         String[] commandWords = command.split(UtilConstants.WORD_SEPARATOR);
 
         if (commandWords.length < 6)
             return;
 
         String tableName = removeSpecialCharactersAndQuotation(commandWords[2]);
-
-//        Table table = TableParser.tables.get(tableName);
         Table table = tables.get(tableName);
 
         if (table == null)
@@ -103,28 +88,21 @@ public class CommandParser {
             Column newColumn = generateNewColumn(table, tableName, command.substring(command.indexOf(UtilConstants.ADD) + 3).trim(), false, mapOfTableRelationships);
             table.addColumn(newColumn);
         } else if (command.contains(UtilConstants.MODIFY)) {
+            //TODO: check command parse logic
             Column newColumn = generateNewColumn(table, tableName, command.substring(command.indexOf(UtilConstants.MODIFY) + 6).trim(), true, mapOfTableRelationships);
-//            table.addColumn(newColumn);
+            table.addColumn(newColumn);
         } else if (command.contains(UtilConstants.MODIFY_COLUMN)) {
+            //TODO: check command parse logic
             Column newColumn = generateNewColumn(table, tableName, command.substring(command.indexOf(UtilConstants.MODIFY_COLUMN) + 13).trim(), true, mapOfTableRelationships);
-//            table.addColumn(newColumn);
+            table.addColumn(newColumn);
         }
-//        else if(command.contains(UtilConstants.DROP_COLUMN))
-//        {
-//            String columnName = commandWords[commandWords.length -1];
-//            if(columnName.equals(UtilConstants.COLUMN))
-//                return;
-//
-//            table.removeColumn(columnName);
-//        }
     }
 
-    public static void parseCommand_CreateDateBase(String command,StringBuilder databaseName) {
-        String[] splitedCommand = command.split(" ");
-        if (splitedCommand.length >= 3) return;
-        databaseName.append(splitedCommand[2].split(";")[0]);
-//        TableParser.databaseSchemaName = splitedCommand[2].split(";")[0];
-//        TableFileGenerator.databaseName = splitedCommand[2].split(";")[0];
+    public static void parseCommand_CreateDateBase(String command, StringBuilder databaseName) {
+        String[] splitCommand = command.split(" ");
+        if (splitCommand.length >= 3) return;
+
+        databaseName.append(splitCommand[2].split(";")[0]);
     }
 
 
@@ -136,7 +114,7 @@ public class CommandParser {
         } else if (commandUpperCase.startsWith(ALTER_TABLE)) {
             parseCommand_AlterTable(command, tables, mapOfTableRelationships);
         } else if (commandUpperCase.startsWith(DROP_TABLE)) {
-            System.out.println("Drop");
+            //TODO: parse drop table command
         } else if (commandUpperCase.startsWith(CREATE_DATABASE) || commandUpperCase.startsWith(CREATE_SCHEMA)) {
             parseCommand_CreateDateBase(command, databaseName);
         }
@@ -144,11 +122,20 @@ public class CommandParser {
     }
 
     private static String removeSpecialCharactersAndQuotation(String string) {
-        return string.replaceAll("\"", "").replaceAll("\'", "").replaceAll("`", "").replaceAll("\t", "").replaceAll("\n", "").replaceAll("\f", "").replaceAll("\b", "");
+        return string.replaceAll("\"", "")
+                .replaceAll("'", "")
+                .replaceAll("`", "")
+                .replaceAll("\t", "")
+                .replaceAll("\n", "")
+                .replaceAll("\f", "")
+                .replaceAll("\b", "");
     }
 
     private static String removeSpecialCharacters(String string) {
-        return string.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\f", "").replaceAll("\b", "");
+        return string.replaceAll("\t", "")
+                .replaceAll("\n", "")
+                .replaceAll("\f", "")
+                .replaceAll("\b", "");
     }
 
     private static Column generateNewColumn(Table table, String tableName, String columnString, boolean isModify, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
@@ -168,26 +155,25 @@ public class CommandParser {
         if (columnType.toUpperCase().startsWith(UtilConstants.TYPE_VARCHAR)) {
             column.setColumnType(UtilConstants.TYPE_VARCHAR);
             column.setColumnSize(Integer.parseInt(columnType.substring(columnType.indexOf("(") + 1, columnType.indexOf(")"))));
+        } else if (columnType.toUpperCase().startsWith(UtilConstants.ENUM_TYPE)) {
+            column.setColumnType(UtilConstants.ENUM_TYPE);
+            column.setEnumTypeValues(parseEnumValues(columnString));
         } else {
             column.setColumnType(columnType);
         }
 
-        if (columnUpperCase.contains(UtilConstants.NOT_NULL))
-            column.setColumnIsNullable(false);
-        else
-            column.setColumnIsNullable(true);
+        column.setColumnIsNullable(!columnUpperCase.contains(UtilConstants.NOT_NULL));
 
-        if (columnUpperCase.contains(UtilConstants.AUTO_INCREMENT))
-            column.setColumnIsAutoIncrement(true);
-        else
-            column.setColumnIsAutoIncrement(false);
+        column.setAutoIncrement(columnUpperCase.contains(UtilConstants.AUTO_INCREMENT));
+
+        if (columnUpperCase.contains(UtilConstants.UNIQUE))
+            column.setUnique(true);
 
         if (columnUpperCase.contains(UtilConstants.PRIMARY_KEY))
             column.setPrimaryKey(true);
 
         if (columnUpperCase.contains(UtilConstants.FOREIGN_KEY)) {
-            column.setIsForignKey(true);
-            column.setForеignKey(true);
+            column.setForeignKey(true);
             column.setVisible(false);
 
             for (int i = 0; i < columnWords.length; i++) {
@@ -195,13 +181,6 @@ public class CommandParser {
                     String foreignTable = columnWords[i + 1];
                     String foreignTableName = foreignTable.split("\\(")[0].trim();
                     column.setForeignTableName(foreignTableName);
-//                    if (TableParser.mapOfTableRelationships.containsKey(foreignTableName)) {
-//                        TableParser.mapOfTableRelationships.get(foreignTableName).add(tableName);
-//                    } else {
-//                        ArrayList<String> newList = new ArrayList<String>();
-//                        newList.add(tableName);
-//                        TableParser.mapOfTableRelationships.put(foreignTableName, newList);
-//                    }
                     if (mapOfTableRelationships.containsKey(foreignTableName)) {
                         mapOfTableRelationships.get(foreignTableName).add(tableName);
                     } else {
@@ -213,6 +192,28 @@ public class CommandParser {
             }
         }
         return column;
+    }
+
+    private static ArrayList<String> parseEnumValues(String input) {
+        ArrayList<String> values = new ArrayList<>();
+
+        int enumIndex = input.indexOf(UtilConstants.ENUM_TYPE);
+
+        if (enumIndex != -1) {
+            int start = input.indexOf('(', enumIndex);
+            int end = input.indexOf(')', start);
+
+            if (start != -1 && end != -1) {
+                String enumValues = input.substring(start + 1, end);
+                String[] splitValues = enumValues.split(",");
+
+                for (String value : splitValues) {
+                    values.add(value.trim().replace("'", ""));
+                }
+            }
+        }
+
+        return values;
     }
 
 }

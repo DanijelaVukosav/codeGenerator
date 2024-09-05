@@ -29,7 +29,7 @@ public class SpringTypes {
         sqlToSpringTypesMap.put("DATE", "Date");
         sqlToSpringTypesMap.put("TIME", "Date");
         sqlToSpringTypesMap.put("TIMESTAMP", "Date");
-
+        sqlToSpringTypesMap.put("DATETIME", "LocalDateTime");
     }
 
     public SpringTypes() {

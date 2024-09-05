@@ -1,7 +1,9 @@
 package com.master.codegenerator.models;
 
 import com.master.codegenerator.generator.*;
-import com.master.codegenerator.reactUtils.StringUtils;
+import com.master.codegenerator.utils.GeneratorUtils;
+
+import java.util.ArrayList;
 
 public class Column {
 
@@ -9,13 +11,16 @@ public class Column {
     private String columnType;
     private int columnSize;
     private boolean columnIsNullable;
-    private boolean columnIsAutoIncrement;
+    private boolean autoIncrement;
     private String tableName;
-    private boolean isForеignKey;
+    private boolean foreignKey;
     private String foreignTableName;
+    private String foreignColumnName;
     private String displayName;
     private String mappedType;
+    private ArrayList<String> enumTypeValues;
     private boolean isPrimaryKey;
+    private boolean isUnique;
     private String defaultValue;
 
     private Boolean isVisible = true;
@@ -26,19 +31,20 @@ public class Column {
     }
 
     public Column(String columnName, String columnType, int columnSize, boolean columnIsNullable,
-                  boolean columnIsAutoIncrement, String tableName, boolean isForignKey, String foreignTableName) {
+                  boolean autoIncrement, String tableName, boolean foreignKey, String foreignTableName) {
         super();
         this.columnName = columnName;
         this.columnType = columnType;
         this.columnSize = columnSize;
         this.columnIsNullable = columnIsNullable;
-        this.columnIsAutoIncrement = columnIsAutoIncrement;
+        this.autoIncrement = autoIncrement;
         this.tableName = tableName;
-        this.isForеignKey = isForignKey;
+        this.foreignKey = foreignKey;
         this.foreignTableName = foreignTableName;
-        this.isVisible = !isForignKey;
+        this.isVisible = !foreignKey;
         this.hasFilter = false;
         this.hasSort = false;
+        this.enumTypeValues = new ArrayList<>();
     }
 
     public String getColumnName() {
@@ -46,7 +52,7 @@ public class Column {
     }
 
     public void setColumnName(String columnName) {
-        this.columnName = StringUtils.firstLatterToLowercase(columnName);
+        this.columnName = GeneratorUtils.firstLatterToLowercase(columnName);
         String displayName = columnName.replaceAll("_", " ");
         StringBuilder displayNameBuilder = new StringBuilder();
         char ch;
@@ -87,11 +93,11 @@ public class Column {
     }
 
     public boolean isAutoIncrement() {
-        return columnIsAutoIncrement;
+        return autoIncrement;
     }
 
-    public void setColumnIsAutoIncrement(boolean columnIsAutoIncrement) {
-        this.columnIsAutoIncrement = columnIsAutoIncrement;
+    public void setAutoIncrement(boolean autoIncrement) {
+        this.autoIncrement = autoIncrement;
     }
 
     public String getTableName() {
@@ -99,15 +105,15 @@ public class Column {
     }
 
     public void setTableName(String tableName) {
-        this.tableName = StringUtils.firstLatterToUppercase(tableName);
+        this.tableName = GeneratorUtils.firstLatterToUppercase(tableName);
     }
 
     public boolean isForeignKey() {
-        return isForеignKey;
+        return foreignKey;
     }
 
-    public void setIsForignKey(boolean isForignKey) {
-        this.isForеignKey = isForignKey;
+    public void setForeignKey(boolean foreignKey) {
+        this.foreignKey = foreignKey;
     }
 
     public String getForeignTableName() {
@@ -134,9 +140,9 @@ public class Column {
         this.mappedType = mappedType;
     }
 
-    public void setForеignKey(boolean isForignKey) {
-        this.isForеignKey = isForignKey;
-    }
+//    public void setForeignKey(boolean foreignKey) {
+//        this.foreignKey = foreignKey;
+//    }
 
     public boolean isPrimaryKey() {
         return isPrimaryKey;
@@ -175,5 +181,29 @@ public class Column {
 
     public void setHasSort(Boolean hasSort) {
         this.hasSort = hasSort;
+    }
+
+    public String getForeignColumnName() {
+        return foreignColumnName;
+    }
+
+    public void setForeignColumnName(String foreignColumnName) {
+        this.foreignColumnName = foreignColumnName;
+    }
+
+    public ArrayList<String> getEnumTypeValues() {
+        return enumTypeValues;
+    }
+
+    public void setEnumTypeValues(ArrayList<String> enumTypeValues) {
+        this.enumTypeValues = enumTypeValues;
+    }
+
+    public boolean isUnique() {
+        return isUnique;
+    }
+
+    public void setUnique(boolean unique) {
+        isUnique = unique;
     }
 }
