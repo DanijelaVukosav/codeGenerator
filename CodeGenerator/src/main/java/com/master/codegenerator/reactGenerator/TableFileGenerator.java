@@ -10,15 +10,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
 public class TableFileGenerator {
-    public static final String REACT_APP = "react-app";
     private final HashMap<String, ArrayList<String>> mapOfTableRelationships;
 
     public String databaseName = "schema";
     private final String genericFolder;
-
     private final String generateTableFolder;
     private final HashMap<String, Table> allTables;
     private final Table table;
@@ -33,7 +29,7 @@ public class TableFileGenerator {
         this.generateTableFolder = reactRootPath +
                 File.separator + "src" + File.separator + "pages"
                 + File.separator + table.getTableName();
-        File databaseFolder = new File(this.generateTableFolder);//reactRootPath + File.separator + "src"
+        File databaseFolder = new File(this.generateTableFolder);
 
         if (!databaseFolder.exists())
             databaseFolder.mkdirs(); // make directory for selected schema
@@ -62,14 +58,13 @@ public class TableFileGenerator {
     }
 
     public void generateFile(String genericFileName, String newFileName) {
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAa ovo je putanja react foldera "+ getTableFolderPath());
         File destFile = new File(getTableFolderPath() + File.separator + newFileName);
         File sourceFile = new File(genericFolder + File.separator + genericFileName);
         if (!destFile.exists()) {
             try {
                 destFile.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                //TODO: Log exception
             }
         }
 
@@ -93,11 +88,10 @@ public class TableFileGenerator {
 
         } catch (IOException e) {
             System.out.println("An error occurred.");
-            e.printStackTrace();
+            //TODO: Log exception
         }
 
     }
-
     private String getComponentsFolderPath() {
         String componentsFolderName = "components";
         return this.generateTableFolder + File.separator + componentsFolderName;
@@ -129,7 +123,7 @@ public class TableFileGenerator {
             try {
                 destFile.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                //TODO: log exception
             }
         }
 
@@ -147,7 +141,6 @@ public class TableFileGenerator {
             }
         } catch (IOException e) {
             System.out.println("An error occurred while generating the file.");
-            e.printStackTrace();
         }
     }
 
@@ -174,88 +167,4 @@ public class TableFileGenerator {
         String relativeDestPath = File.separator + "src" + File.separator + "router" + File.separator + "components" + File.separator + "PrivateRouter.tsx";
         generateFile(databaseName, relativeSourcePath, relativeDestPath, tables, ReplaceReactPlaceholders::replaceApplicationPrivateRouterConstants);
     }
-
-
-//    public static void generateAppComponent(String databaseName, HashMap<String, Table> tables) throws IOException {
-//        File destFile = new File(ReactUtils.getRootFolderPath(databaseName) + File.separator + "src"
-//                + File.separator + "App.tsx");
-//
-//        String genericFolderPath = "ReactFileTemplates" + File.separator + "src" + File.separator + "App.tsx";
-//        Resource genericFolderResource = new ClassPathResource(genericFolderPath);
-//        String genericFolderAbsolutePath = genericFolderResource.getFile().getAbsolutePath();
-//        File sourceFile = new File(genericFolderAbsolutePath);
-//
-//
-//        if (!destFile.exists()) {
-//            try {
-//                destFile.createNewFile();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        try {
-//            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
-//            BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
-//
-//            String line;
-//
-//            while ((line = fileReader.readLine()) != null) {
-//                ArrayList<String> codeLines = ReplaceConst.replaceGeneratorAppConstants(line, tables);
-//                for (String codeLine : codeLines) {
-//                    fileWriter.write(codeLine);
-//                    fileWriter.newLine();
-//                }
-//
-//            }
-//
-//            fileWriter.close();
-//            fileReader.close();
-//
-//        } catch (IOException e) {
-//            System.out.println("An error occurred of App component.");
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public static void generateSystemApiRoutes(String databaseName, HashMap<String, Table> tables) throws IOException {
-//        File destFile = new File(ReactUtils.getRootFolderPath(databaseName) + File.separator + "src"
-//                + File.separator + "api" + File.separator + "apiRoutes.ts");
-//
-//        String genericFolderPath = "ReactFileTemplates" + File.separator + "src"+ File.separator + "api" + File.separator + "apiRoutes.ts";
-//        Resource genericFolderResource = new ClassPathResource(genericFolderPath);
-//        String genericFolderAbsolutePath = genericFolderResource.getFile().getAbsolutePath();
-//        File sourceFile = new File(genericFolderAbsolutePath);
-//
-//
-//        if (!destFile.exists()) {
-//            try {
-//                destFile.createNewFile();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        try {
-//            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(destFile));
-//            BufferedReader fileReader = new BufferedReader(new FileReader(sourceFile));
-//
-//            String line;
-//
-//            while ((line = fileReader.readLine()) != null) {
-//                ArrayList<String> codeLines = ReplaceConst.replaceSystemApiRoutedConstants(line, tables);
-//                for (String codeLine : codeLines) {
-//                    fileWriter.write(codeLine);
-//                }
-//            }
-//
-//            fileWriter.close();
-//            fileReader.close();
-//
-//        } catch (IOException e) {
-//            System.out.println("An error occurred of App component.");
-//            e.printStackTrace();
-//        }
-//    }
-
 }

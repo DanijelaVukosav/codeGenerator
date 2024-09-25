@@ -1,5 +1,7 @@
 package com.master.codegenerator.models;
 
+import com.master.codegenerator.generator.TypeGenerator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,6 +23,22 @@ public class Table {
     public Table(ArrayList<Column> columns) {
         super();
         this.columns = columns;
+    }
+
+    public Table(String tableName, boolean hasTableAudit, ArrayList<Column> columns) {
+        this.tableName = tableName;
+        this.hasTableAudit = hasTableAudit;
+        this.columns = columns;
+        this.columnsMap = new HashMap<>();
+        populateColumnsMap();
+    }
+
+    public void populateColumnsMap() {
+        for (Column column : columns) {
+            column.setTableName(tableName);
+            column.setMappedType(TypeGenerator.typesHashMap.get(column.getColumnType()));
+            columnsMap.put(column.getColumnName(), column);
+        }
     }
 
     public ArrayList<Column> getColumns() {

@@ -1,6 +1,7 @@
 package com.master.codegenerator.springGenerator;
 
 import com.master.codegenerator.models.Table;
+import com.master.codegenerator.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,13 +27,9 @@ public class SpringGenerator {
                 for (int i = 0; i < genericFiles.length; i++) {
                     fileGenerator.generateFile(genericFiles[i], filesForGenerating[i]);
                 }
-
-
             }
-
             GenericSpringFileGenerator.generateBuildGradleFile(schemaName, tables);
             GenericSpringFileGenerator.generateSettingsGradleFile(schemaName, tables);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

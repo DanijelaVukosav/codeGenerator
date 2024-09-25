@@ -10,12 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TableSpringFileGenerator {
-    //	private String componentsFolderName = "components";
-//	private String serviceFolderName = "service";
-    public static String generatedAppsFolder = "GeneratedApps";
     public String databaseName;
-    private String genericFolder = "SpringFileTemplates" + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "com" + File.separator + "database" + File.separator + "table";
-
+    private final String genericFolder;
     private final String generateTableFolder;
     private final Table table;
     private final HashMap<String, ArrayList<String>> mapOfTableRelationships;
@@ -61,22 +57,18 @@ public class TableSpringFileGenerator {
             String line;
 
             while ((line = fileReader.readLine()) != null) {
-                ArrayList<String> codeLines = ReplaceSpringConstants.replaceSpringConstants(databaseName, table, line, mapOfTableRelationships);
+                ArrayList<String> codeLines = ReplaceSpringPlaceholders.replaceSpringConstants(databaseName, table, line, mapOfTableRelationships);
                 for (String codeLine : codeLines) {
                     fileWriter.write(codeLine);
                     fileWriter.newLine();
                 }
-
             }
-
             fileWriter.close();
             fileReader.close();
-
         } catch (IOException e) {
             System.out.println("An error occurred.");
-            e.printStackTrace();
+            //TODO: Log exception
         }
-
     }
 
     private String getTableFolderPath() {

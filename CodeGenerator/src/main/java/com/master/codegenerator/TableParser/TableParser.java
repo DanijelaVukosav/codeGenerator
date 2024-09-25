@@ -79,15 +79,4 @@ public class TableParser {
             CommandParser.parseCommand(command, tables, mapOfTableRelationships, databaseName);
         }
     }
-
-    private static Integer numberOfCommandSeparators(String command) {
-        Integer chCount = 0;
-        for (int i = 0; i < command.length(); i++) {
-            if (command.charAt(i) == commandSeparator.charAt(0)) {
-                chCount++;
-            }
-        }
-        return chCount;
-    }
-
 }

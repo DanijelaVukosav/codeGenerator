@@ -1,0 +1,69 @@
+.index_wrapper {
+    display: flex;
+    justify-content: center;
+    padding-top: 5%;
+    padding-right: 12px;
+
+}
+
+.index_left_padding {
+    padding-left: calc(82px + 0.7vw);
+}
+
+.table {
+    overflow: auto;
+    overflow-wrap: anywhere;
+    color: var(--primary-color) !important;
+    border-color: var(--table-row-border-color) !important;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: baseline;
+}
+
+.table tr {
+    min-height: 40px;
+}
+
+.header_wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.table_pagination {
+    border-radius: 5px;
+
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    padding: 10px;
+    padding-right: 12px;
+    background-color: var(--background);
+    color: var(--primary-color) !important;
+}
+
+.table_pagination button {
+    height: 40px;
+    width: 26px;
+    border: none;
+}
+
+tbody tr:nth-child(odd) {
+    background: var(--table-row-bcg-color);
+    color: var(--primary-color) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(2n+1) > * {
+    color: var(--primary-color) !important;
+}
+
+.page-font, & .MuiPaginationItem-root {
+    color: var(--primary-color) !important;
+}

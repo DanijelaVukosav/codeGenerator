@@ -1,0 +1,13 @@
+.home_container {
+    overflow: auto;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-left: 60px;
+}
+
+.home_container img {
+    height: 35em;
+}

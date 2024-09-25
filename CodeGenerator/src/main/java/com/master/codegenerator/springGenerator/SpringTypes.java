@@ -2,7 +2,6 @@ package com.master.codegenerator.springGenerator;
 import java.util.HashMap;
 
 public class SpringTypes {
-
     public static HashMap<String, String> sqlToSpringTypesMap =new HashMap<String, String>();
     static {
         sqlToSpringTypesMap.put("CHAR", "String");

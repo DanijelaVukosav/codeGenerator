@@ -91,12 +91,9 @@ public class TypeGenerator {
 		mapSQLtypeToInputType.put("TIME", "time");
 		mapSQLtypeToInputType.put("DATETIME", "date_time");
 		mapSQLtypeToInputType.put("TIMESTAMP", "date_time");
-		
-		
 	}
 
 	public TypeGenerator() {
 		
 	}
-
 }

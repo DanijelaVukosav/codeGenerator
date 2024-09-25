@@ -25,45 +25,48 @@ const #{FUL_TABLE_NAME}#Data: FC = () => {
   return (
     <React.Fragment>
       {Boolean(singleObject) && (
-        <React.Fragment>
-          <ObjectDetails<#{FUL_TABLE_NAME}#> object={singleObject} fields={#{FUL_TABLE_NAME}#Columns} />
-          #{PAGE_OF_FOREIGN_TABLES}#
-          {isEnabledTableActions && (
-            <React.Fragment>
-              <div>
-                <EditButton
-                  abilitySubject={"#{AUL_TABLE_NAME}#_UPDATE"}
-                  onClick={() => {
-                    singleObject && openEdit#{FUL_TABLE_NAME}#Modal(singleObject);
-                  }}
-                  customStyle={"width_80px"}
-                >
-                  Edit
-                </EditButton>
-                &nbsp; &nbsp;
-                <DeleteButton
-                  abilitySubject={"#{AUL_TABLE_NAME}#_DELETE"}
-                  onClick={() => {
-                    onDelete#{FUL_TABLE_NAME}#(singleObject?.#{TABLE_PRIMARY_KEY_COLUMN}# ?? -1);
-                  }}
-                  customStyle={"width_80px"}
-                >
-                  Delete
-                </DeleteButton>
-              </div>
-              <PageTabs tabs={pageTabs} />
-              <div style={{ paddingTop: "20px" }}>
-                <Button
-                  label="Go Back"
-                  className="btn btn-success"
-                  onClick={() => {
-                    navigate(-1);
-                  }}
-                />
-              </div>
-            </React.Fragment>
-          )}
-        </React.Fragment>
+          <React.Fragment>
+            <h2 style={{paddingBottom: '30px'}}>#{FUL_TABLE_NAME}#</h2>
+            <ObjectDetails<#{FUL_TABLE_NAME}#> object={singleObject} fields={#{FUL_TABLE_NAME}#Columns}/>
+            #{PAGE_OF_FOREIGN_TABLES}#
+            {isEnabledTableActions && (
+                <React.Fragment>
+                  <div>
+                    <EditButton
+                        abilitySubject={"#{AUL_TABLE_NAME}#_UPDATE"}
+                        onClick={() => {
+                          singleObject && openEdit#{FUL_TABLE_NAME}
+                          #Modal(singleObject);
+                        }}
+                        customStyle={"width_80px"}
+                    >
+                      Edit
+                    </EditButton>
+                    &nbsp; &nbsp;
+                    <DeleteButton
+                        abilitySubject={"#{AUL_TABLE_NAME}#_DELETE"}
+                        onClick={() => {
+                          onDelete#{FUL_TABLE_NAME}#
+                          (singleObject?.#{TABLE_PRIMARY_KEY_COLUMN}# ??-1);
+                        }}
+                        customStyle={"width_80px"}
+                    >
+                      Delete
+                    </DeleteButton>
+                  </div>
+                  <PageTabs tabs={pageTabs}/>
+                  <div style={{paddingTop: "20px"}}>
+                    <Button
+                        label="Go Back"
+                        className="btn btn-success"
+                        onClick={() => {
+                          navigate(-1);
+                        }}
+                    />
+                  </div>
+                </React.Fragment>
+            )}
+          </React.Fragment>
       )}
     </React.Fragment>
   );

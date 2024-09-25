@@ -1,24 +1,18 @@
 package com.master.codegenerator.springGenerator;
 
+import com.master.codegenerator.generator.SpringReplaceFunction;
 import com.master.codegenerator.models.Table;
 import com.master.codegenerator.utils.GeneratorUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@FunctionalInterface
-interface SpringReplaceFunction {
-    ArrayList<String> replaceSpringPlaceholders(String line, String databaseName, HashMap<String, Table> tables);
-}
-
-
 public class GenericSpringFileGenerator {
-    private String rootGenericFolder = "SpringFileTemplates";
+    private final String rootGenericFolder;
     public String generatedAppFolder;
 
     public GenericSpringFileGenerator(String schemaName) throws IOException {
@@ -118,16 +112,13 @@ public class GenericSpringFileGenerator {
                 "security" + File.separator + "services" + File.separator + "UserDetailsServiceImpl.java",
                 "security" + File.separator + "WebSecurityConfig.java"
         };
-        System.out.println("KONACNO "+ apiSourceRelativePath + " >>>>>>> "+ apiDestinationRelativePath);
         for (String apiGenericFile : apiGenericFiles) {
             generateFile(schemaName, tables,
                     apiSourceRelativePath + File.separator + apiGenericFile,
                     apiDestinationRelativePath + File.separator + apiGenericFile,
-                    ReplaceSpringConstants::replaceSchemaConstants);
+                    ReplaceSpringPlaceholders::replaceSchemaConstants);
         }
-
     }
-
 
     private void generateFolders(String relativeFolderPath, String[] folderNames) {
         for (String folderName : folderNames) {
@@ -139,18 +130,14 @@ public class GenericSpringFileGenerator {
     }
 
     private void copyFilesFromGenericFolder(String relativeFolderPath, String[] files) throws IOException {
-
         for (String fileName : files) {
             File destFile = new File(
                     generatedAppFolder + generateRelativeFolderPath(relativeFolderPath) + File.separator + fileName);
             File sourceFile = new File(rootGenericFolder + generateRelativeFolderPath(relativeFolderPath) + File.separator + fileName);
-            System.out.println("sourde file " + sourceFile.getPath());
             if (!sourceFile.exists()) {
-                System.out.println((sourceFile.getName()));
                 throw new FileNotFoundException();
             }
             copyFile(sourceFile, destFile);
-
         }
     }
 
@@ -168,8 +155,6 @@ public class GenericSpringFileGenerator {
     }
 
     public static void generateFile(String databaseName, HashMap<String, Table> tables, String relativeSourcePath, String relativeDestPath, SpringReplaceFunction replaceFunction) throws IOException {
-
-
         File destFile = new File(GeneratorUtils.getSpringRootFolderPath(databaseName) + File.separator + relativeDestPath);
 
         Resource genericFolderResource = new ClassPathResource(relativeSourcePath);
@@ -179,15 +164,10 @@ public class GenericSpringFileGenerator {
 
         destFile.getParentFile().mkdirs();
 
-        System.out.println("dest File " + destFile.getAbsolutePath() + "   >>> " + destFile.exists());
-        System.out.println("source File " + sourceFile.getAbsolutePath() + "   >>> " + sourceFile.exists());
-
-
         if (!destFile.exists()) {
             try {
                 destFile.createNewFile();
             } catch (IOException e) {
-                System.out.println("Not found file >> " + relativeDestPath);
                 e.printStackTrace();
             }
         }
@@ -205,7 +185,6 @@ public class GenericSpringFileGenerator {
                 }
             }
         } catch (IOException e) {
-            System.out.println("An error occurred while generating the file ---- " + relativeDestPath);
             e.printStackTrace();
         }
     }
@@ -213,13 +192,13 @@ public class GenericSpringFileGenerator {
     public static void generateBuildGradleFile(String databaseName, HashMap<String, Table> tables) throws IOException {
         String relativeSourcePath = "SpringFileTemplates" + File.separator + "build.gradle";
         String relativeDestPath = "build.gradle";
-        generateFile(databaseName, tables, relativeSourcePath, relativeDestPath, ReplaceSpringConstants::replaceSchemaConstants);
+        generateFile(databaseName, tables, relativeSourcePath, relativeDestPath, ReplaceSpringPlaceholders::replaceSchemaConstants);
     }
 
     public static void generateSettingsGradleFile(String databaseName, HashMap<String, Table> tables) throws IOException {
         String relativeSourcePath = "SpringFileTemplates" + File.separator + "settings.gradle";
         String relativeDestPath = "settings.gradle";
-        generateFile(databaseName, tables, relativeSourcePath, relativeDestPath, ReplaceSpringConstants::replaceSchemaConstants);
+        generateFile(databaseName, tables, relativeSourcePath, relativeDestPath, ReplaceSpringPlaceholders::replaceSchemaConstants);
     }
 
     private static String getDestinationApiRelativePath(String schemaName) {

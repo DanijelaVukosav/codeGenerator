@@ -12,7 +12,7 @@ public class ReactGenerator {
         try {
             new GenericReactFileGenerator(databaseName).copyGenericFiles();
             for (Table table : tables.values()) {
-                TableFileGenerator fileGenerator = new TableFileGenerator(table, databaseName,mapOfTableRelationships, tables);
+                TableFileGenerator fileGenerator = new TableFileGenerator(table, databaseName, mapOfTableRelationships, tables);
                 String tableName = GeneratorUtils.firstLatterToUppercase(table.getTableName());
                 String[] genericFiles = {"types.ts", "Index.tsx", "components" + File.separator + "Form.tsx",
                         "components" + File.separator + "Header.tsx", "components" + File.separator + "Modal.tsx",
@@ -31,15 +31,12 @@ public class ReactGenerator {
                 for (int i = 0; i < genericFiles.length; i++) {
                     fileGenerator.generateFile(genericFiles[i], filesForGenerating[i]);
                 }
-
-
             }
 
             TableFileGenerator.generateSystemApiRoutes(databaseName, tables);
             TableFileGenerator.generateReactApplicationRoutes(databaseName, tables);
             TableFileGenerator.generateApplicationSidebar(databaseName, tables);
             TableFileGenerator.generateApplicationPrivateRouter(databaseName, tables);
-//            TableFileGenerator.generateAppComponent(databaseName, tables);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

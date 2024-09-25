@@ -1,0 +1,77 @@
+.single_page_wrapper {
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;
+    padding-left: 112px;
+    padding-right: 12px;
+}
+
+.tabs-container {
+    padding-top: 20px;
+}
+
+.tabs-header {
+    font-size: 40px;
+    line-height: 0.8em;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem 0;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+}
+
+.tab-content-active {
+    display: block;
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 0;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(239, 237, 239, 0.5);
+}
+
+.tab {
+    flex-grow: 1;
+    text-align: center;
+    min-width: 100px;
+}
+
+.tab label {
+    cursor: pointer;
+    display: block;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1em;
+    padding: 1rem 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.tab .checked-label {
+    border-bottom: 3px solid #fd264f;
+}
+
+
+.tab label:hover, .tab label:focus {
+    border-bottom: 3px solid #fd264f;
+}
+
+.tab input {
+    display: none;
+}
+
+.tab-content-wrapper {
+    width: 100%;
+}
+
+.tab input:checked + label {
+    border-bottom: 3px solid #fd264f;
+}
+
+.tab input:checked + label + .tab-content-wrapper > .tab-content {
+    display: block;
+}

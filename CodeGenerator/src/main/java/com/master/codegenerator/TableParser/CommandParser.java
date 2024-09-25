@@ -1,7 +1,6 @@
 package com.master.codegenerator.TableParser;
 
 import com.master.codegenerator.models.Column;
-import com.master.codegenerator.models.Permission;
 import com.master.codegenerator.models.Table;
 
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ public class CommandParser {
         String[] commandWords = command.split(UtilConstants.WORD_SEPARATOR);
         String tableName = removeSpecialCharactersAndQuotation(commandWords[2].replace("(", ""));
         table.setTableName(tableName);
+        System.out.println("BBB "+ command);
 
         String columns = command.substring(command.indexOf("(") + 1, command.lastIndexOf(")"));
 
@@ -25,7 +25,9 @@ public class CommandParser {
         for (String columnString : columnsArray) {
             String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
 
-            String substring = columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")"));
+            System.out.println("AAAAA " + columnString+ " >>>" + columnString.indexOf("(") + 1 +" <<"+ columnString.indexOf(")"));
+
+            String substring = columnString.contains("(") ? columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")")) : columnString;
 
             if (columnUpperCase.startsWith(UtilConstants.PRIMARY_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.PRIMARY_KEY))) {
                 String[] primaryKeyColumns = substring.split(",");
@@ -36,6 +38,7 @@ public class CommandParser {
             } else if (columnUpperCase.startsWith(UtilConstants.FOREIGN_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.FOREIGN_KEY))) {
                 Column foreignColumn = table.getColumn(substring);
                 foreignColumn.setForeignKey(true);
+                foreignColumn.setVisibleOnSinglePage(false);
                 foreignColumn.setVisible(false);
                 int indexOfReferences = columnString.toUpperCase().indexOf(UtilConstants.REFERENCES);
                 if (indexOfReferences >= 0) {
@@ -60,11 +63,6 @@ public class CommandParser {
                 table.addColumn(column);
             }
         }
-
-//        ArrayList<String> defaultPermission = new ArrayList<>();
-//        defaultPermission.add("ADMIN");
-//        table.setPermissions(new Permission(defaultPermission));
-
         tables.put(tableName, table);
     }
 
@@ -162,7 +160,7 @@ public class CommandParser {
             column.setColumnType(columnType);
         }
 
-        column.setColumnIsNullable(!columnUpperCase.contains(UtilConstants.NOT_NULL));
+        column.setNullable(!columnUpperCase.contains(UtilConstants.NOT_NULL));
 
         column.setAutoIncrement(columnUpperCase.contains(UtilConstants.AUTO_INCREMENT));
 
@@ -175,6 +173,7 @@ public class CommandParser {
         if (columnUpperCase.contains(UtilConstants.FOREIGN_KEY)) {
             column.setForeignKey(true);
             column.setVisible(false);
+            column.setVisibleOnSinglePage(false);
 
             for (int i = 0; i < columnWords.length; i++) {
                 if (columnWords[i].equals(UtilConstants.REFERENCES) && i < (columnWords.length - 1)) {

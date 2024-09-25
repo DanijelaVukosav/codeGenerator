@@ -10,7 +10,7 @@ public class Column {
     private String columnName;
     private String columnType;
     private int columnSize;
-    private boolean columnIsNullable;
+    private boolean nullable;
     private boolean autoIncrement;
     private String tableName;
     private boolean foreignKey;
@@ -24,24 +24,27 @@ public class Column {
     private String defaultValue;
 
     private Boolean isVisible = true;
+
+    private Boolean visibleOnSinglePage = true;
     private Boolean hasFilter = false;
     private Boolean hasSort = false;
 
     public Column() {
     }
 
-    public Column(String columnName, String columnType, int columnSize, boolean columnIsNullable,
+    public Column(String columnName, String columnType, int columnSize, boolean nullable,
                   boolean autoIncrement, String tableName, boolean foreignKey, String foreignTableName) {
         super();
         this.columnName = columnName;
         this.columnType = columnType;
         this.columnSize = columnSize;
-        this.columnIsNullable = columnIsNullable;
+        this.nullable = nullable;
         this.autoIncrement = autoIncrement;
         this.tableName = tableName;
         this.foreignKey = foreignKey;
         this.foreignTableName = foreignTableName;
         this.isVisible = !foreignKey;
+        this.visibleOnSinglePage = !foreignKey;
         this.hasFilter = false;
         this.hasSort = false;
         this.enumTypeValues = new ArrayList<>();
@@ -56,7 +59,6 @@ public class Column {
         String displayName = columnName.replaceAll("_", " ");
         StringBuilder displayNameBuilder = new StringBuilder();
         char ch;
-        System.out.println("ala ala ala ala "+ displayName +" "+ columnName);
         for (int i = 0; i < displayName.length(); i++) {
             ch = displayName.charAt(i);
             if (Character.isUpperCase(ch)) {
@@ -85,11 +87,11 @@ public class Column {
     }
 
     public boolean isNullable() {
-        return columnIsNullable;
+        return nullable;
     }
 
-    public void setColumnIsNullable(boolean columnIsNullable) {
-        this.columnIsNullable = columnIsNullable;
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
     }
 
     public boolean isAutoIncrement() {
@@ -150,7 +152,7 @@ public class Column {
 
     public void setPrimaryKey(boolean isPrimaryKey) {
         this.isPrimaryKey = isPrimaryKey;
-        this.columnIsNullable = false;
+        this.nullable = false;
     }
     public String getDefaultValue() {
         return defaultValue;
@@ -205,5 +207,13 @@ public class Column {
 
     public void setUnique(boolean unique) {
         isUnique = unique;
+    }
+
+    public Boolean getVisibleOnSinglePage() {
+        return visibleOnSinglePage;
+    }
+
+    public void setVisibleOnSinglePage(Boolean visibleOnSinglePage) {
+        this.visibleOnSinglePage = visibleOnSinglePage;
     }
 }

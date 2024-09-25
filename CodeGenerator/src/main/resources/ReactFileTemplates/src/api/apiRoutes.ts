@@ -1,4 +1,4 @@
-export const API_ROUTES_ID_PLACEHOLDER = "{id}";
+export const API_ROUTES_ID_PLACEHOLDER = "${API_ROUTES_ID_PLACEHOLDER}";
 export const API_ROUTES = {
   LOGIN: "/auth/signin",
   SIGN_UP: "/auth/signup",

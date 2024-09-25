@@ -21,7 +21,7 @@ export const use#{FUL_TABLE_NAME}#Service = () => {
   };
 
   const getById: (id?: string | number) => Promise<#{FUL_TABLE_NAME}#> = async (id?: string | number) => {
-    const url = API_ROUTES.GET_BY_ID_#{AUL_TABLE_NAME}#.replace("{id}", id?.toString() ?? "");
+    const url = API_ROUTES.GET_BY_ID_#{AUL_TABLE_NAME}#.replace(API_ROUTES_ID_PLACEHOLDER, id?.toString() ?? "");
     return await getObject<#{FUL_TABLE_NAME}#>(url);
   };
   const create: (object: #{FUL_TABLE_NAME}#) => Promise<#{FUL_TABLE_NAME}#> = async (object: #{FUL_TABLE_NAME}#) => {
