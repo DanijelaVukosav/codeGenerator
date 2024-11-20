@@ -27,6 +27,8 @@ public class GenerateCodeFile {
         if (data.getDatabaseName() == null || data.getDatabaseName().isEmpty()) {
             data.setDatabaseName(GeneratorUtils.DEFAULT_SCHEMA_NAME);
         }
+        //TODO: BRISIII
+        data.setDatabaseName(GeneratorUtils.DEFAULT_SCHEMA_NAME);
         String sourceDirPath = GeneratorUtils.getSchemaRootFolderPath(data.getDatabaseName());
         String zipFilePath = "GeneratedApps" + File.separator + data.getDatabaseName() + "Project" + ".zip";
 

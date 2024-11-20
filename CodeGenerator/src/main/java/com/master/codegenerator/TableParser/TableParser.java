@@ -14,9 +14,13 @@ public class TableParser {
     //Key - tableName, value - array of tables where tableName is foreign key
     public static HashMap<String, ArrayList<String>> mapOfTableRelationships = new HashMap<String, ArrayList<String>>();
 
+    public static String commandLineSeparator = "#####";
     public static String commandSeparator = ";";
 
     public static String commentSeparator = "--";
+
+    public static String multilineCommentSeparator = "/*";
+    public static String lineCommentSeparator = "*";
 
     public TableParser() {
     }
@@ -52,10 +56,10 @@ public class TableParser {
                 } else {
                     command = command.substring(1);
                 }
-            } else if (line.startsWith(commentSeparator)) {
+            } else if (Objects.equals(line, "") || line.startsWith(commentSeparator) || line.startsWith(multilineCommentSeparator) || line.startsWith(lineCommentSeparator)) {
 //                command += line;
             } else if (!line.contains(commandSeparator)) {
-                command += line;
+                command += line.concat(" ").concat(commandLineSeparator);
             } else {
                 String[] lineParts = line.split(commandSeparator);
                 int numberOfCommands = lineParts.length == 1 || line.endsWith(commandSeparator) ? lineParts.length : (lineParts.length - 1);

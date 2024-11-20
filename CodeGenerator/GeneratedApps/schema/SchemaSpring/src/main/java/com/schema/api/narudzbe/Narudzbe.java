@@ -1,4 +1,5 @@
 package com.schema.api.narudzbe;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.schema.api.korisnici.Korisnici;
 import com.schema.api.proizvodi.Proizvodi;
@@ -11,47 +12,49 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "narudzbe")
 @SQLDelete(sql = "UPDATE narudzbe SET is_deleted = true WHERE id=?")
 @SQLRestriction(value = "is_deleted=false")
 public class Narudzbe {
-        private static final long serialVersionUID = 1L;
-@Id
-@GeneratedValue(strategy=GenerationType.AUTO)
-@NotNull
-@Column(name="id")
-private Integer id;
- 
-@NotNull
-@Column(name="kolicina")
-private Integer kolicina;
- 
-@NotNull
-@Column(name="datum_narudzbe")
-private LocalDateTime datum_narudzbe;
- 
-@NotNull
-@Column(name="korisnik_id")
-private Integer korisnik_id;
- 
-@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-@JoinColumn(name = "id", insertable = false, updatable = false)
-private Korisnici Korisnici_korisnik_id;
- 
-@NotNull
-@Column(name="proizvod_id")
-private Integer proizvod_id;
- 
-@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-@JoinColumn(name = "id", insertable = false, updatable = false)
-private Proizvodi Proizvodi_proizvod_id;
- 
-@CreatedDate
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
+    @Column(name = "id")
+    private Integer id;
+
+    @NotNull
+    @Column(name = "kolicina")
+    private Integer kolicina;
+
+    @NotNull
+    @Column(name = "datum_narudzbe")
+    private LocalDateTime datum_narudzbe;
+
+    @NotNull
+    @Column(name = "korisnik_id")
+    private Integer korisnik_id;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinColumn(name = "korisnik_id", insertable = false, updatable = false)
+    private Korisnici Korisnici_korisnik_id;
+
+    @NotNull
+    @Column(name = "proizvod_id")
+    private Integer proizvod_id;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinColumn(name = "proizvod_id", insertable = false, updatable = false)
+    private Proizvodi Proizvodi_proizvod_id;
+
+    @CreatedDate
     @Column(
             nullable = false,
             updatable = false
@@ -73,10 +76,12 @@ private Proizvodi Proizvodi_proizvod_id;
     @LastModifiedBy
     @Column(insertable = false)
     private String lastModifiedBy;
-        @JsonIgnore
-        private boolean isDeleted = Boolean.FALSE;
-        public Narudzbe() {
-        }
+    @JsonIgnore
+    private boolean isDeleted = Boolean.FALSE;
+
+    public Narudzbe() {
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -133,7 +138,7 @@ private Proizvodi Proizvodi_proizvod_id;
         return datum_narudzbe;
     }
 
-public LocalDateTime getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
@@ -165,10 +170,11 @@ public LocalDateTime getCreateDate() {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-        public boolean isDeleted() {
+    public boolean isDeleted() {
         return isDeleted;
-}
-        public void setDeleted(boolean deleted) {
+    }
+
+    public void setDeleted(boolean deleted) {
         isDeleted = deleted;
-}
+    }
 }

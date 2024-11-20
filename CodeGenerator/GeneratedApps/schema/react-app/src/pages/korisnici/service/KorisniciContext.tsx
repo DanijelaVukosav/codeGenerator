@@ -107,7 +107,7 @@ export const KorisniciContextProvider: FC<KorisniciProps> = ({
   const { filterSpecification, sortingColumns, setFilterSpecification, changeFilterCriteria, changeColumnSort, changePaginationPage, clearFilters } =
     useFilterAndSort();
 
-  const loadKorisniciesQueryKey: QueryKey = ["getData", filterSpecification];
+  const loadKorisniciesQueryKey: QueryKey = ["getKorisniciData", filterSpecification];
 
   const {
     refetch,

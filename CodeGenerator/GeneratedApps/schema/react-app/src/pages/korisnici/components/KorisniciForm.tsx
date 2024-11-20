@@ -36,6 +36,7 @@ export const KorisniciForm: FC = () => {
     handleSubmit,
     setValue,
     watch,
+      getValues,
     formState: { errors },
   } = useForm<Korisnici>({
     defaultValues: editKorisnici,

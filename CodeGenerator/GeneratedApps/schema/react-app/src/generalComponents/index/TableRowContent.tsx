@@ -10,12 +10,12 @@ interface TableRowContentProps {
 export const TableRowContent = ({ object, fields }: TableRowContentProps) => {
   return (
     <React.Fragment>
-      {fields.map((columnSettings) => {
-        if (!columnSettings.isVisibleOnTable) return <React.Fragment></React.Fragment>;
+      {fields.map((columnSettings, index) => {
+        if (!columnSettings.isVisibleOnTable) return <React.Fragment key={`row_${columnSettings.key}_${index}`}></React.Fragment>;
         switch (columnSettings.type) {
           case COLUMN_TYPE.CHECKBOX:
             return (
-              <td>
+              <td key={`row_${columnSettings.key}_${index}`}>
                 {Boolean(object?.[columnSettings.key]) ? (
                   <img src={"/svg/checkbox-checked.svg"} style={{ height: "24px" }} alt={"checked"} />
                 ) : (
@@ -25,7 +25,7 @@ export const TableRowContent = ({ object, fields }: TableRowContentProps) => {
             );
           case COLUMN_TYPE.DATE:
             return (
-              <td>
+              <td key={`row_${columnSettings.key}_${index}`}>
                 {!object?.[columnSettings.key]
                   ? "-"
                   : typeof object?.[columnSettings.key] === "string"
@@ -35,7 +35,7 @@ export const TableRowContent = ({ object, fields }: TableRowContentProps) => {
             );
           case COLUMN_TYPE.DATE_TIME:
             return (
-              <td>
+              <td key={`row_${columnSettings.key}_${index}`}>
                 {!object?.[columnSettings.key]
                   ? "-"
                   : typeof object?.[columnSettings.key] === "string"
@@ -44,11 +44,11 @@ export const TableRowContent = ({ object, fields }: TableRowContentProps) => {
               </td>
             );
           case COLUMN_TYPE.PASSWORD:
-            return <td>*********</td>;
+            return <td key={`row_${columnSettings.key}_${index}`}>*********</td>;
           case COLUMN_TYPE.TEXT:
           case COLUMN_TYPE.NUMBER:
           default:
-            return <td>{object?.[columnSettings.key]}</td>;
+            return <td key={`row_${columnSettings.key}_${index}`}>{object?.[columnSettings.key]}</td>;
         }
       })}
     </React.Fragment>

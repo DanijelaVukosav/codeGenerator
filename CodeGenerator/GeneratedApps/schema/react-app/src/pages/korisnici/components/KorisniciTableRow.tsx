@@ -17,7 +17,7 @@ const TableRow: React.FunctionComponent<IProps> = (props) => {
   const { onDeleteKorisnici, openEditKorisniciModal, onRowSelect, selectedRowId, isEnabledTableActions } = useContext(KorisniciContext);
   let navigate = useNavigate();
 
-  const onRowDoubleClick = () => {
+  const onRowClick = () => {
     if (onRowSelect) {
       onRowSelect?.(props.data);
       return;
@@ -27,7 +27,7 @@ const TableRow: React.FunctionComponent<IProps> = (props) => {
   const isSelectedRow = selectedRowId && props.data.id.toString() === selectedRowId?.toString();
 
   return (
-    <IndexTableRow onDoubleClick={onRowDoubleClick} className={isSelectedRow ? "selected_row" : ""}>
+    <IndexTableRow onClick={onRowClick} className={isSelectedRow ? "selected_row" : ""}>
       <TableRowContent object={props?.data} fields={KorisniciColumns} />
       {isEnabledTableActions && (
         <IndexTableActionCell className="flex_center">

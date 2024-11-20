@@ -107,7 +107,7 @@ export const NarudzbeContextProvider: FC<NarudzbeProps> = ({
   const { filterSpecification, sortingColumns, setFilterSpecification, changeFilterCriteria, changeColumnSort, changePaginationPage, clearFilters } =
     useFilterAndSort();
 
-  const loadNarudzbeesQueryKey: QueryKey = ["getData", filterSpecification];
+  const loadNarudzbeesQueryKey: QueryKey = ["getNarudzbeData", filterSpecification];
 
   const {
     refetch,

@@ -74,8 +74,9 @@ public class Column {
     }
 
     public void setColumnType(String columnType) {
-        this.columnType = columnType;
-        this.mappedType = TypeGenerator.typesHashMap.get(columnType);
+        String formatedColumnType = columnType.split("\\(")[0];
+        this.columnType = formatedColumnType.toUpperCase();
+        this.mappedType = TypeGenerator.typesHashMap.get(formatedColumnType.toUpperCase());
     }
 
     public int getColumnSize() {

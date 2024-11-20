@@ -2,6 +2,10 @@ package com.master.codegenerator.TableParser;
 
 public class UtilConstants {
     public static String TYPE_VARCHAR = "VARCHAR";
+    public static String TYPE_CHAR = "CHAR";
+    public static String TYPE_NVARCHAR = "VARCHAR";
+    public static String TYPE_NCHAR = "NCHAR";
+    public static String TYPE_NATIONAL = "NATIONAL";
 
     public static String ENUM_TYPE = "ENUM";
 
@@ -10,6 +14,7 @@ public class UtilConstants {
     public static String AUTO_INCREMENT = " AUTO_INCREMENT";
     public static String UNIQUE = "UNIQUE";
     public static String PRIMARY_KEY = "PRIMARY KEY";
+    public static String INDEX_KEY = "KEY";
 
     public static String FOREIGN_KEY = "FOREIGN KEY";
     public static String CONSTRAINT = "CONSTRAINT";

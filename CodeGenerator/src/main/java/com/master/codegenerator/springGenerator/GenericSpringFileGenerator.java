@@ -29,7 +29,7 @@ public class GenericSpringFileGenerator {
         String[] foldersInRoot = {"gradle", "src"};
         generateFolders("", foldersInRoot);
 
-        String[] filesInRootFolder = {"gradlew", "gradlew.bat", "HELP.md"}; //".gitignore",
+        String[] filesInRootFolder = {"gradlew", "gradlew.bat"}; //".gitignore",
         copyFilesFromGenericFolder("", filesInRootFolder);
 
         String[] foldersInGradle = {"wrapper"};

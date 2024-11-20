@@ -3,8 +3,8 @@ package com.master.codegenerator.TableParser;
 import com.master.codegenerator.models.Column;
 import com.master.codegenerator.models.Table;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.master.codegenerator.models.SQLCommand.*;
 
@@ -20,47 +20,60 @@ public class CommandParser {
 
         String columns = command.substring(command.indexOf("(") + 1, command.lastIndexOf(")"));
 
-        String[] columnsArray = columns.split(",");
+        String[] columnsArray = columns.split(TableParser.commandLineSeparator);
 
         for (String columnString : columnsArray) {
-            String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
+            try {
 
-            System.out.println("AAAAA " + columnString+ " >>>" + columnString.indexOf("(") + 1 +" <<"+ columnString.indexOf(")"));
-
-            String substring = columnString.contains("(") ? columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")")) : columnString;
-
-            if (columnUpperCase.startsWith(UtilConstants.PRIMARY_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.PRIMARY_KEY))) {
-                String[] primaryKeyColumns = substring.split(",");
-
-                for (String primaryKey : primaryKeyColumns) {
-                    table.getColumn(removeSpecialCharactersAndQuotation(primaryKey)).setPrimaryKey(true);
+                if (Objects.equals(columnString.trim(), "")) {
+                    continue;
                 }
-            } else if (columnUpperCase.startsWith(UtilConstants.FOREIGN_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.FOREIGN_KEY))) {
-                Column foreignColumn = table.getColumn(substring);
-                foreignColumn.setForeignKey(true);
-                foreignColumn.setVisibleOnSinglePage(false);
-                foreignColumn.setVisible(false);
-                int indexOfReferences = columnString.toUpperCase().indexOf(UtilConstants.REFERENCES);
-                if (indexOfReferences >= 0) {
-                    String referenceSubstring = columnString.substring(indexOfReferences);
-                    String foreignTableName = referenceSubstring.split("\\(")[0].replace(UtilConstants.REFERENCES, "").trim();
-                    String referencedColumnName = referenceSubstring.substring(referenceSubstring.indexOf("(") + 1, referenceSubstring.indexOf(")")).trim();
-                    foreignColumn.setForeignTableName(foreignTableName);
-                    foreignColumn.setForeignColumnName(referencedColumnName);
+                String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
 
-                    if (mapOfTableRelationships.containsKey(foreignTableName)) {
-                        mapOfTableRelationships.get(foreignTableName).add(tableName);
-                    } else {
-                        ArrayList<String> newList = new ArrayList<String>();
-                        newList.add(tableName);
-                        mapOfTableRelationships.put(foreignTableName, newList);
+                System.out.println("AAAAA " + columnString + " >>>" + columnString.indexOf("(") + 1 + " <<" + columnString.indexOf(")"));
+
+                String substring = columnString.contains("(") ? columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")")) : columnString;
+
+                if (columnUpperCase.startsWith(UtilConstants.INDEX_KEY)) {
+                    //TODO: implement column index
+                    continue;
+                } else if (columnUpperCase.startsWith(UtilConstants.PRIMARY_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.PRIMARY_KEY))) {
+                    String[] primaryKeyColumns = substring.split(",");
+
+                    for (String primaryKey : primaryKeyColumns) {
+                        table.getColumn(removeSpecialCharactersAndQuotation(primaryKey)).setPrimaryKey(true);
                     }
+                } else if (columnUpperCase.startsWith(UtilConstants.FOREIGN_KEY) || (columnUpperCase.startsWith(UtilConstants.CONSTRAINT) && columnUpperCase.contains(UtilConstants.FOREIGN_KEY))) {
+                    Column foreignColumn = table.getColumn(substring);
+                    foreignColumn.setForeignKey(true);
+                    foreignColumn.setVisibleOnSinglePage(false);
+                    foreignColumn.setVisible(false);
+                    int indexOfReferences = columnString.toUpperCase().indexOf(UtilConstants.REFERENCES);
+                    if (indexOfReferences >= 0) {
+                        String referenceSubstring = columnString.substring(indexOfReferences);
+                        String foreignTableName = referenceSubstring.split("\\(")[0].replace(UtilConstants.REFERENCES, "").trim();
+                        String referencedColumnName = referenceSubstring.substring(referenceSubstring.indexOf("(") + 1, referenceSubstring.indexOf(")")).trim();
+                        foreignColumn.setForeignTableName(foreignTableName);
+                        foreignColumn.setForeignColumnName(referencedColumnName);
 
+                        if (mapOfTableRelationships.containsKey(foreignTableName)) {
+                            mapOfTableRelationships.get(foreignTableName).add(tableName);
+                        } else {
+                            ArrayList<String> newList = new ArrayList<String>();
+                            newList.add(tableName);
+                            mapOfTableRelationships.put(foreignTableName, newList);
+                        }
+
+                    }
+                } else if (!columnUpperCase.startsWith(UtilConstants.PRIMARY_KEY) && !columnUpperCase.startsWith(UtilConstants.FOREIGN_KEY) && !columnUpperCase.startsWith(UtilConstants.CONSTRAINT)) {
+
+                    Column column = generateNewColumn(table, tableName, columnString, false, mapOfTableRelationships);
+                    table.addColumn(column);
                 }
-            } else if (!columnUpperCase.startsWith(UtilConstants.PRIMARY_KEY) && !columnUpperCase.startsWith(UtilConstants.FOREIGN_KEY) && !columnUpperCase.startsWith(UtilConstants.CONSTRAINT)) {
-
-                Column column = generateNewColumn(table, tableName, columnString, false, mapOfTableRelationships);
-                table.addColumn(column);
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
             }
         }
         tables.put(tableName, table);
@@ -138,7 +151,13 @@ public class CommandParser {
 
     private static Column generateNewColumn(Table table, String tableName, String columnString, boolean isModify, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
         String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
-        String[] columnWords = columnString.trim().split(UtilConstants.WORD_SEPARATOR);
+        String[] columnWords = Arrays.stream(columnString.trim().split(UtilConstants.WORD_SEPARATOR))
+                .filter(s -> s != null && !s.isEmpty())
+                .toArray(String[]::new);
+
+//        List<String> filteredWords = columnWords;
+
+
 
         Column column = table.getColumn(removeSpecialCharactersAndQuotation(columnWords[0].trim()));
 
@@ -150,9 +169,15 @@ public class CommandParser {
         column.setTableName(removeSpecialCharactersAndQuotation(tableName));
 
         String columnType = columnWords[1].trim();
-        if (columnType.toUpperCase().startsWith(UtilConstants.TYPE_VARCHAR)) {
+        if (columnType.toUpperCase().startsWith(UtilConstants.TYPE_CHAR) || columnType.toUpperCase().startsWith(UtilConstants.TYPE_VARCHAR)
+                || columnType.toUpperCase().startsWith(UtilConstants.TYPE_NVARCHAR) || columnType.toUpperCase().startsWith(UtilConstants.TYPE_NCHAR) ) {
             column.setColumnType(UtilConstants.TYPE_VARCHAR);
             column.setColumnSize(Integer.parseInt(columnType.substring(columnType.indexOf("(") + 1, columnType.indexOf(")"))));
+        } else if (columnType.toUpperCase().startsWith(UtilConstants.TYPE_NATIONAL)) {
+            column.setColumnType(UtilConstants.TYPE_VARCHAR);
+            if((columnType.toUpperCase().startsWith(UtilConstants.TYPE_VARCHAR) || columnType.toUpperCase().startsWith(UtilConstants.TYPE_CHAR)) && columnWords[2].contains("(")) {
+                column.setColumnSize(Integer.parseInt(columnWords[2].substring(columnType.indexOf("(") + 1, columnType.indexOf(")"))));
+            }
         } else if (columnType.toUpperCase().startsWith(UtilConstants.ENUM_TYPE)) {
             column.setColumnType(UtilConstants.ENUM_TYPE);
             column.setEnumTypeValues(parseEnumValues(columnString));

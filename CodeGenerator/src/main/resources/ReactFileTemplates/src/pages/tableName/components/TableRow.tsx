@@ -17,7 +17,7 @@ const TableRow: React.FunctionComponent<IProps> = (props) => {
   const { onDelete#{FUL_TABLE_NAME}#, openEdit#{FUL_TABLE_NAME}#Modal, onRowSelect, selectedRowId, isEnabledTableActions } = useContext(#{FUL_TABLE_NAME}#Context);
   let navigate = useNavigate();
 
-  const onRowDoubleClick = () => {
+  const onRowClick = () => {
     if (onRowSelect) {
       onRowSelect?.(props.data);
       return;
@@ -27,7 +27,7 @@ const TableRow: React.FunctionComponent<IProps> = (props) => {
   const isSelectedRow = selectedRowId && props.data.#{TABLE_PRIMARY_KEY_COLUMN}#.toString() === selectedRowId?.toString();
 
   return (
-    <IndexTableRow onDoubleClick={onRowDoubleClick} className={isSelectedRow ? "selected_row" : ""}>
+    <IndexTableRow onClick={onRowClick} className={isSelectedRow ? "selected_row" : ""}>
       <TableRowContent object={props?.data} fields={#{FUL_TABLE_NAME}#Columns} />
       {isEnabledTableActions && (
         <IndexTableActionCell className="flex_center">

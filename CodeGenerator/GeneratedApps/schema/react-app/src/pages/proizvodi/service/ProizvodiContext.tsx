@@ -107,7 +107,7 @@ export const ProizvodiContextProvider: FC<ProizvodiProps> = ({
   const { filterSpecification, sortingColumns, setFilterSpecification, changeFilterCriteria, changeColumnSort, changePaginationPage, clearFilters } =
     useFilterAndSort();
 
-  const loadProizvodiesQueryKey: QueryKey = ["getData", filterSpecification];
+  const loadProizvodiesQueryKey: QueryKey = ["getProzvodiData", filterSpecification];
 
   const {
     refetch,

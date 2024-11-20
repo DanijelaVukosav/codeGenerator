@@ -67,7 +67,7 @@ public class ReplaceSpringPlaceholders {
 
         ArrayList<String> finalCodeLines = new ArrayList<String>();
 
-        if (codeLine == null || codeLine.isEmpty()) return finalCodeLines;
+        if (codeLine == null || codeLine.trim().isEmpty()) return finalCodeLines;
 
         if (codeLine.contains(SpringGeneratorConstant.ALL_SCHEMA_NAME)) {
             codeLine = codeLine.replaceAll(SpringGeneratorConstantRegex.ALL_SCHEMA_NAME,
@@ -96,6 +96,7 @@ public class ReplaceSpringPlaceholders {
         if (codeLine.contains(SpringGeneratorConstant.PRIMARY_KEY_SPRING_TYPE)) {
             for (Column column : table.getColumns()) {
                 if (column.isPrimaryKey()) {
+                    System.out.println(column.getColumnName() +"   "+column.getColumnName());
                     codeLine = codeLine.replaceAll(SpringGeneratorConstantRegex.PRIMARY_KEY_SPRING_TYPE,
                             SpringTypes.sqlToSpringTypesMap.get(column.getColumnType().trim()));
                 }
@@ -316,7 +317,7 @@ public class ReplaceSpringPlaceholders {
                 finalCodeLines.add(" ");
 
                 finalCodeLines.add("@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})");
-                finalCodeLines.add("@JoinColumn(name = \"" + column.getForeignColumnName() + "\", insertable = false, updatable = false)");
+                finalCodeLines.add("@JoinColumn(name = \"" + column.getColumnName() + "\", insertable = false, updatable = false)");
                 String foreignAttribute = "private " + StringUtils.firstLatterToUppercase(column.getForeignTableName()) + " " + getForeignObjectName(column) + ";";
                 finalCodeLines.add(foreignAttribute);
                 finalCodeLines.add(" ");
