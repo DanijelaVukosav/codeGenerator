@@ -30,23 +30,22 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder encoder;
+    private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    PermissionRepository permissionRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
-
-    @Autowired
-    RefreshTokenService refreshTokenService;
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            PasswordEncoder encoder,
+            JwtUtils jwtUtils,
+            RefreshTokenService refreshTokenService
+    ) {
+        this.authenticationManager = authenticationManager;
+        this.encoder = encoder;
+        this.jwtUtils = jwtUtils;
+        this.refreshTokenService = refreshTokenService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

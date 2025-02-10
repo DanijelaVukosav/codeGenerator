@@ -29,8 +29,11 @@ public class GenericReactFileGenerator {
 
     public void copyGenericFiles() throws IOException {
         File schemaFolder = new File(generatedAppFolder);
-        if (!schemaFolder.exists())
-            schemaFolder.mkdirs();
+        if (!schemaFolder.exists()){
+            if (!schemaFolder.mkdirs()) {
+                throw new IOException("Something went wrong while schema folder");
+            }
+        }
 
         String[] foldersInRoot = {"public", "src"};
         generateFolders("", foldersInRoot);
@@ -146,12 +149,14 @@ public class GenericReactFileGenerator {
         copyFilesFromGenericFolder("src" + File.separator + "systemUsers" + File.separator + "service", filesInSystemUsersService);
     }
 
-    private void generateFolders(String relativeFolderPath, String[] folderNames) {
+    private void generateFolders(String relativeFolderPath, String[] folderNames) throws IOException {
         for (String folderName : folderNames) {
             File folder = new File(
                     generatedAppFolder + generateRelativeFolderPath(relativeFolderPath) + File.separator + folderName);
             if (!folder.exists()) {
-                folder.mkdir();
+                if (!folder.mkdirs()) {
+                    throw new IOException("Something went wrong while folder");
+                }
             }
         }
     }

@@ -58,27 +58,50 @@ export const FormInputField: React.FunctionComponent<FormInputFieldProps> = ({
     case COLUMN_TYPE.MULTISELECT_CHECKBOX: {
       return (
         <div className="input_container">
-          <p className="input_label">{label}</p>
+          <div>
+            <p className="input_label">{label}</p>
+            <div className="checkbox_group">
+              <input
+                  type="checkbox"
+                  className="input_field"
+                  style={{marginRight: "5px"}}
+                  id={`${name}_select_all`}
+                  onChange={e => {
+                    if (e.target.checked && columnOptions) {
+                      setValue(name, [...columnOptions]);
+                    } else {
+                      setValue(name, []);
+                    }
+                  }}
+              />
+
+              <label className="input_label" style={{display: "inline-block", marginBottom: "5px"}}
+                     id={`${name}_select_all`}>
+                SELECT ALL
+              </label>
+            </div>
+          </div>
           <div className="checkbox_wrapper">
             {columnOptions?.map((option) => {
               return (
-                <div className="checkbox_group">
-                  <input
-                    type="checkbox"
-                    className="input_field"
-                    style={{ marginRight: "5px" }}
-                    id={`${name}_${option}`}
-                    {...register(name)}
-                    value={option}
-                    // defaultChecked={editUser?.permissions?.some((permiss: string) => {
-                    //   return permiss === permission;
-                    // })}
-                  />
+                  <div className="checkbox_group">
+                    <input
+                        type="checkbox"
+                        className="input_field"
+                        style={{marginRight: "5px"}}
+                        id={`${name}_${option}`}
+                        {...register(name)}
+                        value={option}
+                        // defaultChecked={editUser?.permissions?.some((permiss: string) => {
+                        //   return permiss === permission;
+                        // })}
+                    />
 
-                  <label className="input_label" style={{ display: "inline-block", marginBottom: "5px" }} id={`${name}_${option}`}>
-                    {option}
-                  </label>
-                </div>
+                    <label className="input_label" style={{display: "inline-block", marginBottom: "5px"}}
+                           id={`${name}_${option}`}>
+                      {option}
+                    </label>
+                  </div>
               );
             })}
           </div>

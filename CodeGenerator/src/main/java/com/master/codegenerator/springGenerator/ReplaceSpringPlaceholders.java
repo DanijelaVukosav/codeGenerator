@@ -96,7 +96,6 @@ public class ReplaceSpringPlaceholders {
         if (codeLine.contains(SpringGeneratorConstant.PRIMARY_KEY_SPRING_TYPE)) {
             for (Column column : table.getColumns()) {
                 if (column.isPrimaryKey()) {
-                    System.out.println(column.getColumnName() +"   "+column.getColumnName());
                     codeLine = codeLine.replaceAll(SpringGeneratorConstantRegex.PRIMARY_KEY_SPRING_TYPE,
                             SpringTypes.sqlToSpringTypesMap.get(column.getColumnType().trim()));
                 }
@@ -157,6 +156,7 @@ public class ReplaceSpringPlaceholders {
             for (Column column : table.getColumns()) {
                 if (column.isForeignKey()) {
                     String referencedTableName = column.getForeignTableName();
+//                    System.out.println('<'+column.getColumnName()+">"+column.getTableName()+">>>"+column.getForeignTableName());
                     String importModelString = "import " + getTablePackageName(databaseName, referencedTableName) + "." + getTableModelName(referencedTableName) + ";";
                     if (!finalCodeLines.contains(importModelString)) {
                         finalCodeLines.add(importModelString);

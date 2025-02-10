@@ -25,8 +25,8 @@ public class ParseSQLFile {
 
             HashMap<String, ArrayList<String>> mapOfTableRelationships = new HashMap<String, ArrayList<String>>();
 
-            if(databaseName.isEmpty())
-                databaseName.append("schema");
+//            if(databaseName.isEmpty())isEmpty
+//                databaseName.append("schema");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
 
                 TableParser.generateTables(reader, tables, mapOfTableRelationships, databaseName);

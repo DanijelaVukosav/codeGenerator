@@ -12,6 +12,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,8 @@ import java.util.List;
 @Table(name = "#{TABLE_NAME}#")
 @SQLDelete(sql = "UPDATE #{TABLE_NAME}# SET is_deleted = true WHERE id=?")
 @SQLRestriction(value = "is_deleted=false")
-public class #{FUL_TABLE_NAME}# {
+public class #{FUL_TABLE_NAME}# implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
         #{MODEL_ATTRIBUTES}#
         #{MODEL_FOREIGN_ATTRIBUTES}#

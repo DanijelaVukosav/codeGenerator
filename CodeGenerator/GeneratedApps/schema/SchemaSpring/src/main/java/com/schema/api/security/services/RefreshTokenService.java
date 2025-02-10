@@ -18,14 +18,19 @@ import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
-    @Value("${codegenerator.app.jwtRefreshExpirationMs}")
-    private Long refreshTokenDurationMs;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+    private final Long refreshTokenDurationMs;
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    public RefreshTokenService(
+            RefreshTokenRepository refreshTokenRepository,
+            UserRepository userRepository,
+            @Value("${codegenerator.app.jwtRefreshExpirationMs}") Long refreshTokenDurationMs
+    ) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
+        this.refreshTokenDurationMs = refreshTokenDurationMs;
+    }
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
@@ -35,7 +40,7 @@ public class RefreshTokenService {
     public RefreshToken createRefreshToken(Long userId) {
         RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUser(userRepository.findById(userId).get());
+        refreshToken.setUser(userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)));
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
         refreshToken.setToken(UUID.randomUUID().toString());
 
@@ -57,8 +62,9 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public int deleteByUserId(Long userId) {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+    public void deleteByUserId(Long userId) {
+        refreshTokenRepository.deleteByUser(userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId)));
     }
 
     private Key getSignInKey(String secretKey) {

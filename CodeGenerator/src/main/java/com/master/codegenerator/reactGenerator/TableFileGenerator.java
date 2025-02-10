@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class TableFileGenerator {
     private final HashMap<String, ArrayList<String>> mapOfTableRelationships;
 
-    public String databaseName = "schema";
+    public String databaseName;
     private final String genericFolder;
     private final String generateTableFolder;
     private final HashMap<String, Table> allTables;
@@ -31,30 +31,47 @@ public class TableFileGenerator {
                 + File.separator + table.getTableName();
         File databaseFolder = new File(this.generateTableFolder);
 
-        if (!databaseFolder.exists())
-            databaseFolder.mkdirs(); // make directory for selected schema
+        if (!databaseFolder.exists()) {
+            if (!databaseFolder.mkdirs()) {
+                // make directory for selected schema
+                throw new IOException("Something went wrong while creating database folder");
+            }
+        }
 
         String genericFolderPath = GeneratorUtils.getReactTemplateTableFolderPath();
         Resource genericFolderResource = new ClassPathResource(genericFolderPath);
         this.genericFolder = genericFolderResource.getFile().getAbsolutePath();
     }
 
-    public void generateFolderStructureOfTable() {
+    public void generateFolderStructureOfTable() throws IOException {
         File tableFolder = new File(getTableFolderPath());
-        if (!tableFolder.exists())
-            tableFolder.mkdirs(); // make directory for table
+        if (!tableFolder.exists()){
+            if (!tableFolder.mkdirs()) {
+                throw new IOException("Something went wrong while creating table folder");
+            }
+        }
 
         File componentsFolder = new File(getComponentsFolderPath());
-        if (!componentsFolder.exists())
-            componentsFolder.mkdirs(); // make directory for components
+        if (!componentsFolder.exists()){
+            if (!componentsFolder.mkdirs()) {
+                throw new IOException("Something went wrong while creating components folder");
+            }
+        }
 
         File serviceFolder = new File(getServiceFolderPath());
-        if (!serviceFolder.exists())
-            serviceFolder.mkdirs(); // make directory for table service
+        if (!serviceFolder.exists()){
+            if (!serviceFolder.mkdirs()) {
+                // make directory for selected schema
+                throw new IOException("Something went wrong while creating service folder");
+            }
+        }
 
         File singlePageFolder = new File(getSinglePageFolderPath());
-        if (!singlePageFolder.exists())
-            singlePageFolder.mkdirs(); // make directory for single page components
+        if (!singlePageFolder.exists()){
+            if (!singlePageFolder.mkdirs()) {
+                throw new IOException("Something went wrong while creating single page folder");
+            }
+        }
     }
 
     public void generateFile(String genericFileName, String newFileName) {
@@ -62,7 +79,9 @@ public class TableFileGenerator {
         File sourceFile = new File(genericFolder + File.separator + genericFileName);
         if (!destFile.exists()) {
             try {
-                destFile.createNewFile();
+                if(!destFile.createNewFile()){
+                    throw new IOException("Something went wrong while creating dest file");
+                }
             } catch (IOException e) {
                 //TODO: Log exception
             }
@@ -121,7 +140,9 @@ public class TableFileGenerator {
 
         if (!destFile.exists()) {
             try {
-                destFile.createNewFile();
+                if(!destFile.createNewFile()){
+                    throw new IOException("Something went wrong while creating dest file");
+                }
             } catch (IOException e) {
                 //TODO: log exception
             }

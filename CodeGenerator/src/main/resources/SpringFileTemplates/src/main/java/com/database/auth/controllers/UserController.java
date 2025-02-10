@@ -32,16 +32,14 @@ import java.util.Set;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/systemUser")
 public class UserController {
-
-
-    @Autowired
     PasswordEncoder encoder;
 
     private final UserService userService;
     private final PermissionService permissionService;
 
     @Autowired
-    public UserController(UserService userService, PermissionService permissionService) {
+    public UserController(PasswordEncoder encoder, UserService userService, PermissionService permissionService) {
+        this.encoder = encoder;
         this.userService = userService;
         this.permissionService = permissionService;
     }
@@ -93,9 +91,10 @@ public class UserController {
         Set<String> strPermissions = new HashSet<String>(List.of(editRequest.getPermissions()));
         Set<Permission> userPermissions = new HashSet<>();
 
-        if (!strPermissions.isEmpty()) {
-            strPermissions.forEach(permission -> {
-                try {
+        try {
+
+            if (!strPermissions.isEmpty()) {
+                strPermissions.forEach(permission -> {
 
                     Permission userPermission = permissionService.findPermissionByName(permission).orElseGet(() -> {
                         Permission newPermission = new Permission();
@@ -104,10 +103,11 @@ public class UserController {
                         return permissionService.create(newPermission);
                     });
                     userPermissions.add(userPermission);
-                } catch (IllegalArgumentException e) {
-                    new RuntimeException("Error: Permission is not found.");
-                }
-            });
+                });
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Send valid permissions!");
         }
 
         previousUser.setPermissions(userPermissions);

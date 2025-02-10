@@ -13,6 +13,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,8 @@ import java.util.List;
 @Table(name = "narudzbe")
 @SQLDelete(sql = "UPDATE narudzbe SET is_deleted = true WHERE id=?")
 @SQLRestriction(value = "is_deleted=false")
-public class Narudzbe {
+public class Narudzbe implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

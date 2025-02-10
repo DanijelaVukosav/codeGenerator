@@ -4,7 +4,6 @@ import com.schema.api.auth.models.Permission;
 import com.schema.api.auth.models.PermissionEnum;
 import com.schema.api.auth.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,9 +11,6 @@ import java.util.Optional;
 @Service
 public class PermissionService {
 
-
-    @Autowired
-    private ApplicationContext applicationContext;
     private final PermissionRepository permissionRepository;
 
     @Autowired

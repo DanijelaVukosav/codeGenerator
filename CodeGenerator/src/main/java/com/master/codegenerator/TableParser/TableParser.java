@@ -49,6 +49,9 @@ public class TableParser {
 
         String command = "";
         for (String line : lines) {
+            if (Objects.equals(line, "") || line.startsWith(commentSeparator) || line.startsWith(multilineCommentSeparator) || line.startsWith(lineCommentSeparator)) {
+                continue;
+            }
             if (line.startsWith(commandSeparator) && !Objects.equals(command, "")) {
                 delCommands.add(command.trim());
                 if (command.equals(commandSeparator)) {
@@ -56,8 +59,6 @@ public class TableParser {
                 } else {
                     command = command.substring(1);
                 }
-            } else if (Objects.equals(line, "") || line.startsWith(commentSeparator) || line.startsWith(multilineCommentSeparator) || line.startsWith(lineCommentSeparator)) {
-//                command += line;
             } else if (!line.contains(commandSeparator)) {
                 command += line.concat(" ").concat(commandLineSeparator);
             } else {

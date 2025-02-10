@@ -24,7 +24,9 @@ public class TableSpringFileGenerator {
         File tableFolder = new File(folderPath);
         this.table = table;
         if (!tableFolder.exists()) {
-            tableFolder.mkdirs(); // make directory for selected schema
+            if(!tableFolder.mkdirs()){
+                throw new IOException("Something went wrong while creating table folder");
+            }
         }
         String genericFolderPath = "SpringFileTemplates" + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "com" + File.separator + "database" + File.separator + "table";
         Resource genericFolderResource = new ClassPathResource(genericFolderPath);
@@ -32,21 +34,22 @@ public class TableSpringFileGenerator {
         this.mapOfTableRelationships = mapOfTableRelationships;
     }
 
-    public void generateFolderStructureOfTable() {
+    public void generateFolderStructureOfTable() throws IOException {
         File tableFolder = new File(getTableFolderPath());
-        if (!tableFolder.exists())
-            tableFolder.mkdirs(); // make directory for table
+        if (!tableFolder.exists()){
+            if(!tableFolder.mkdirs()){
+                throw new IOException("Something went wrong while creating table folder");
+            }
+        }
     }
 
-    public void generateFile(String genericFileName, String newFileName) {
+    public void generateFile(String genericFileName, String newFileName) throws IOException {
 
         File destFile = new File(getTableFolderPath() + File.separator + newFileName);
         File sourceFile = new File(genericFolder + File.separator + genericFileName);
         if (!destFile.exists()) {
-            try {
-                destFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(!destFile.createNewFile()){
+                throw new IOException("Something went wrong while creating dest file");
             }
         }
 

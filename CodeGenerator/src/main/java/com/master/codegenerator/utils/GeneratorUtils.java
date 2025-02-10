@@ -7,7 +7,7 @@ public class GeneratorUtils {
 
     public static final String REACT_APP = "react-app";
     public static final String SPRING_PROJECT_NAME = "Spring";
-    public static String DEFAULT_SCHEMA_NAME = "schemaTest";
+    public static String DEFAULT_SCHEMA_NAME = "schemaTest1";
     public static String generatedAppsFolder = "GeneratedApps";
     public static String REACT_GENERIC_FOLDER_NAME = "ReactFileTemplates";
 

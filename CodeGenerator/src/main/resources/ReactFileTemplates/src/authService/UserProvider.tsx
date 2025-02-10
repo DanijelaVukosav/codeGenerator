@@ -1,4 +1,4 @@
-import React, { FC, useState, useContext, createContext, useEffect } from "react";
+import React, { FC, useState, useContext, createContext, useEffect, useCallback } from "react";
 import { AuthObject, Roles, SystemUser, USER_LOCAL_STORAGE_KEY } from "./types";
 import { isEmpty } from "lodash";
 
@@ -54,14 +54,15 @@ const UserProvider: FC<Props> = ({ children }) => {
     setUser(null);
   };
 
-  const loadUserAuthFromLocalStorage = () => {
+  const loadUserAuthFromLocalStorage = useCallback(() => {
+    if (!isEmpty(auth)) return ;
     const userFromLocalStorage = localStorage.getItem(USER_LOCAL_STORAGE_KEY);
     if (userFromLocalStorage) {
       const userAuth = JSON.parse(localStorage.getItem(USER_LOCAL_STORAGE_KEY) ?? "");
-      if (auth || isEmpty(auth)) setAuth(userAuth);
+      if (isEmpty(auth)) setAuth(userAuth);
       return userAuth;
     }
-  };
+  },[auth, setAuth]);
 
   return (
     <UserContext.Provider

@@ -12,28 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-enum FilterCriteriaType {
-    date("date"),
-    time("time"),
-    datetime_local("datetime_local"),
-    LOCAL_DATE("LOCAL_DATE"),
-    LOCAL_TIME("LOCAL_TIME"),
-    LOCAL_DATE_TIME("LOCAL_DATE_TIME"),
-    number("number"),
-    NUMBER("NUMBER"),
-
-    CHECKBOX("CHECKBOX"),
-    checkbox("checkbox"),
-    STRING("STRING"),
-    text("text");
-
-    public final String label;
-
-    private FilterCriteriaType(String label) {
-        this.label = label;
-    }
-}
-
 public class FilterAndSortUtils {
 
     public static Sort.Order[] ParseSortColumns(String[] sort) {

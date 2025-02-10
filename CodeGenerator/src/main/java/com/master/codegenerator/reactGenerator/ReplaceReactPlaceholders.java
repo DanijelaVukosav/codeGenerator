@@ -152,12 +152,13 @@ public class ReplaceReactPlaceholders {
                     Table referenceTable = allTables.get(tableName);
                     for (Column column : referenceTable.getColumns()) {
                         if (column.isForeignKey() && Objects.equals(column.getForeignTableName(), table.getTableName())) {
-                            predefinedFilterCriteria.append("{\n" +
-                                    "              key: \"" + column.getColumnName() + "\",\n" +
-                                    "              operation: FilterCriteriaOperator.EQUALS,\n" +
-                                    "              type: \"" + column.getMappedType() + "\",\n" +
-                                    "              value: singleObject?." + column.getForeignColumnName() + ",\n" +
-                                    "            }");
+                            predefinedFilterCriteria.append("{\n" + "              key: \"")
+                                    .append(column.getColumnName()).append("\",\n")
+                                    .append("              operation: FilterCriteriaOperator.EQUALS,\n")
+                                    .append("              type: \"").append(column.getMappedType())
+                                    .append("\",\n").append("              value: singleObject?.")
+                                    .append(column.getForeignColumnName()).append(",\n")
+                                    .append("            }");
                         }
 
                     }

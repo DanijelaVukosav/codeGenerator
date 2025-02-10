@@ -34,8 +34,10 @@ public class TokenControllerAdvice {
         StringBuilder finalErrorMessage = new StringBuilder();
         for (ObjectError error : ex.getBindingResult().getAllErrors()) {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage().trim();
-            finalErrorMessage.append(" ").append(StringUtils.changeFirstLatterToLoweCase(errorMessage)).append('.');
+            if(error.getDefaultMessage() != null) {
+                String errorMessage = error.getDefaultMessage().trim();
+                finalErrorMessage.append(" ").append(StringUtils.changeFirstLatterToLoweCase(errorMessage)).append('.');
+            }
         }
         HashMap<String, String> responseBody = new HashMap<>();
         responseBody.put("message", finalErrorMessage.toString());

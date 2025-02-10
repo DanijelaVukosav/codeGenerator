@@ -35,8 +35,7 @@ const #{FUL_TABLE_NAME}#Data: FC = () => {
                     <EditButton
                         abilitySubject={"#{AUL_TABLE_NAME}#_UPDATE"}
                         onClick={() => {
-                          singleObject && openEdit#{FUL_TABLE_NAME}
-                          #Modal(singleObject);
+                          singleObject && openEdit#{FUL_TABLE_NAME}#Modal(singleObject);
                         }}
                         customStyle={"width_80px"}
                     >

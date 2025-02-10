@@ -58,7 +58,7 @@ const UserProvider: FC<Props> = ({ children }) => {
     const userFromLocalStorage = localStorage.getItem(USER_LOCAL_STORAGE_KEY);
     if (userFromLocalStorage) {
       const userAuth = JSON.parse(localStorage.getItem(USER_LOCAL_STORAGE_KEY) ?? "");
-      if (!auth || isEmpty(auth)) setAuth(userAuth);
+      if (auth || isEmpty(auth)) setAuth(userAuth);
       return userAuth;
     }
   };

@@ -76,7 +76,7 @@ export const #{FUL_TABLE_NAME}#Form: FC = () => {
   });
 
   const onSubmit = async (data: #{FUL_TABLE_NAME}#) => {
-    const submitData = { ...data, id: isEditMode ? edit#{FUL_TABLE_NAME}#?.id : data.id };
+    const submitData = { ...data, id: isEditMode ? edit#{FUL_TABLE_NAME}#?.#{TABLE_PRIMARY_KEY_COLUMN}# : data.#{TABLE_PRIMARY_KEY_COLUMN}# };
     #{FORM_CHECK_FOREIGN_FIELDS}#
     setErrorMessage("");
     if (isEditMode) {

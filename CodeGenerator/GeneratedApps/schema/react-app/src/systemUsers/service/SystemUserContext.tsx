@@ -70,7 +70,7 @@ export const SystemUsersContextProvider: FC<SystemUserProps> = ({ children }) =>
   const { pageSize, setPageSize, numberOfPages, setNumberOfPages } = usePagination();
   const { filterSpecification, sortingColumns, setFilterSpecification, changeFilterCriteria, changeColumnSort, changePaginationPage, clearFilters } =
     useFilterAndSort();
-  const loadSystemUsersQueryKey: QueryKey = ["getSystemUserData", filterSpecification];
+  const loadSystemUsersQueryKey: QueryKey = ["getData", filterSpecification];
 
   const {
     refetch,

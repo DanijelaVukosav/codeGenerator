@@ -16,7 +16,6 @@ public class CommandParser {
         String[] commandWords = command.split(UtilConstants.WORD_SEPARATOR);
         String tableName = removeSpecialCharactersAndQuotation(commandWords[2].replace("(", ""));
         table.setTableName(tableName);
-        System.out.println("BBB "+ command);
 
         String columns = command.substring(command.indexOf("(") + 1, command.lastIndexOf(")"));
 
@@ -29,8 +28,6 @@ public class CommandParser {
                     continue;
                 }
                 String columnUpperCase = removeSpecialCharacters(columnString.toUpperCase()).trim();
-
-                System.out.println("AAAAA " + columnString + " >>>" + columnString.indexOf("(") + 1 + " <<" + columnString.indexOf(")"));
 
                 String substring = columnString.contains("(") ? columnString.substring(columnString.indexOf("(") + 1, columnString.indexOf(")")) : columnString;
 
@@ -111,9 +108,11 @@ public class CommandParser {
 
     public static void parseCommand_CreateDateBase(String command, StringBuilder databaseName) {
         String[] splitCommand = command.split(" ");
-        if (splitCommand.length >= 3) return;
+        if (splitCommand.length < 3) return;
 
-        databaseName.append(splitCommand[2].split(";")[0]);
+        String name = removeSpecialCharactersAndQuotation(splitCommand[2]);
+
+        databaseName.append(name);
     }
 
 
@@ -124,11 +123,10 @@ public class CommandParser {
             parseCommand_CreateTable(command, tables, mapOfTableRelationships);
         } else if (commandUpperCase.startsWith(ALTER_TABLE)) {
             parseCommand_AlterTable(command, tables, mapOfTableRelationships);
-        } else if (commandUpperCase.startsWith(DROP_TABLE)) {
-            //TODO: parse drop table command
         } else if (commandUpperCase.startsWith(CREATE_DATABASE) || commandUpperCase.startsWith(CREATE_SCHEMA)) {
             parseCommand_CreateDateBase(command, databaseName);
         }
+        //TODO: parse drop table command
 
     }
 
@@ -136,6 +134,7 @@ public class CommandParser {
         return string.replaceAll("\"", "")
                 .replaceAll("'", "")
                 .replaceAll("`", "")
+                .replaceAll(";", "")
                 .replaceAll("\t", "")
                 .replaceAll("\n", "")
                 .replaceAll("\f", "")

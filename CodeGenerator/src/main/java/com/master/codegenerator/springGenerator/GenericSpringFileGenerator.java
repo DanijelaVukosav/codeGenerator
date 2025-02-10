@@ -23,8 +23,11 @@ public class GenericSpringFileGenerator {
 
     public void copyGenericFiles(String schemaName) throws IOException {
         File schemaFolder = new File(generatedAppFolder);
-        if (!schemaFolder.exists())
-            schemaFolder.mkdirs(); // make directory for schema
+        if (!schemaFolder.exists()){
+            if (!schemaFolder.mkdirs()) {
+                throw new IOException("Something went wrong while creating schema folder");
+            }
+        }
 
         String[] foldersInRoot = {"gradle", "src"};
         generateFolders("", foldersInRoot);
@@ -74,6 +77,7 @@ public class GenericSpringFileGenerator {
                 "ApiApplication.java",
                 "utils" + File.separator + "FilterAndSortUtils.java",
                 "utils" + File.separator + "FilterCriteria.java",
+                "utils" + File.separator + "FilterCriteriaType.java",
                 "utils" + File.separator + "FilterData.java",
                 "utils" + File.separator + "StringUtils.java",
                 "audit" + File.separator + "AuditorAwareImpl.java",
@@ -120,12 +124,15 @@ public class GenericSpringFileGenerator {
         }
     }
 
-    private void generateFolders(String relativeFolderPath, String[] folderNames) {
+    private void generateFolders(String relativeFolderPath, String[] folderNames) throws IOException {
         for (String folderName : folderNames) {
             File folder = new File(
                     generatedAppFolder + generateRelativeFolderPath(relativeFolderPath) + File.separator + folderName);
-            if (!folder.exists())
-                folder.mkdirs();
+            if (!folder.exists()){
+                if (!folder.mkdirs()) {
+                    throw new IOException("Something went wrong while creating folder");
+                }
+            }
         }
     }
 
@@ -162,11 +169,17 @@ public class GenericSpringFileGenerator {
         File sourceFile = new File(genericFolderAbsolutePath);
 
 
+//        if (!destFile.getParentFile().mkdirs()) {
+//            throw new IOException("Something went wrong while creating dest folder " + destFile.getAbsolutePath() );
+//        }
         destFile.getParentFile().mkdirs();
+
 
         if (!destFile.exists()) {
             try {
-                destFile.createNewFile();
+                if(!destFile.createNewFile()){
+                    throw new IOException("Something went wrong while creating dest file");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
