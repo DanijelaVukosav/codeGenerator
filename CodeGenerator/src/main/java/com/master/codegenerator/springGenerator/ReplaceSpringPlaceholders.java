@@ -58,8 +58,8 @@ public class ReplaceSpringPlaceholders {
     }
 
     private static String getForeignObjectName(Column column) {
-        return GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()) + "_"
-                + column.getColumnName();
+        return GeneratorUtils.firstLatterToUppercase(column.getForeignTableName())
+                + GeneratorUtils.firstLatterToUppercase(column.getCamelColumnName());
     }
 
     public static ArrayList<String> replaceSpringConstants(String databaseName, Table table, String codeLineFromFile, HashMap<String, ArrayList<String>> mapOfTableRelationships) {
@@ -105,7 +105,7 @@ public class ReplaceSpringPlaceholders {
             for (Column column : table.getColumns()) {
                 if (column.isPrimaryKey()) {
                     codeLine = codeLine.replaceAll(SpringGeneratorConstantRegex.SET_PRIMARY_KEY,
-                            getColumnSetterFunctionName(column.getColumnName()));
+                            getColumnSetterFunctionName(column.getCamelColumnName()));
                 }
             }
         }
@@ -192,10 +192,10 @@ public class ReplaceSpringPlaceholders {
                             getTableModelName(column.getForeignTableName()));
 
                     createForeignTablesTemplate = createForeignTablesTemplate.replaceAll("COLUMN_NAME",
-                            column.getColumnName());
+                            column.getCamelColumnName());
 
                     createForeignTablesTemplate = createForeignTablesTemplate.replaceAll("COLUMN_GETTER",
-                            getColumnGetterFunctionName(column.getColumnName()));
+                            getColumnGetterFunctionName(column.getCamelColumnName()));
 
                     createForeignTablesTemplate = createForeignTablesTemplate.replaceAll("FLL_CURRENT_TABLE_NAME",
                             StringUtils.firstLatterToLowercase(table.getTableName()));
@@ -282,8 +282,8 @@ public class ReplaceSpringPlaceholders {
             codeLine = "";
         } else if (codeLine.contains(SpringGeneratorConstant.MODEL_SETTERS_AND_GETTERS)) {
             for (Column column : table.getColumns()) {
-                finalCodeLines.add(getColumnSetterFunction(column.getColumnName(), column.getColumnType(), false));
-                finalCodeLines.add(getColumnGetterFunction(column.getColumnName(), column.getColumnType(), false));
+                finalCodeLines.add(getColumnSetterFunction(column.getCamelColumnName(), column.getColumnType(), false));
+                finalCodeLines.add(getColumnGetterFunction(column.getCamelColumnName(), column.getColumnType(), false));
                 if (column.isForeignKey()) {
                     finalCodeLines.add(getColumnSetterFunction(getForeignObjectName(column), getTableModelName(column.getForeignTableName()), true));
                     finalCodeLines.add(getColumnGetterFunction(getForeignObjectName(column), getTableModelName(column.getForeignTableName()), true));
@@ -301,7 +301,7 @@ public class ReplaceSpringPlaceholders {
 
                 String uniqueConstraint = column.isUnique() ? ", unique = true" : "";
                 finalCodeLines.add("@Column(name=\"" + column.getColumnName() + "\"" + uniqueConstraint + ")");
-                String classAttribute = "private " + getColumnSpringType(column.getColumnType()) + " " + column.getColumnName() + ";";
+                String classAttribute = "private " + getColumnSpringType(column.getColumnType()) + " " + column.getCamelColumnName() + ";";
                 finalCodeLines.add(classAttribute);
                 finalCodeLines.add(" ");
             }
@@ -312,7 +312,7 @@ public class ReplaceSpringPlaceholders {
                 if (!column.isNullable()) finalCodeLines.add("@NotNull");
 
                 finalCodeLines.add("@Column(name=\"" + column.getColumnName() + "\")");
-                String classAttribute = "private " + getColumnSpringType(column.getColumnType()) + " " + column.getColumnName() + ";";
+                String classAttribute = "private " + getColumnSpringType(column.getColumnType()) + " " + column.getCamelColumnName() + ";";
                 finalCodeLines.add(classAttribute);
                 finalCodeLines.add(" ");
 

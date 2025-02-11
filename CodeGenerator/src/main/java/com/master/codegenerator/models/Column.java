@@ -2,6 +2,7 @@ package com.master.codegenerator.models;
 
 import com.master.codegenerator.generator.*;
 import com.master.codegenerator.utils.GeneratorUtils;
+import com.master.codegenerator.utils.StringUtils;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,10 @@ public class Column {
         this.hasFilter = false;
         this.hasSort = false;
         this.enumTypeValues = new ArrayList<>();
+    }
+
+    public String getCamelColumnName() {
+        return StringUtils.convertToCamelCase(GeneratorUtils.firstLatterToLowercase(this.columnName));
     }
 
     public String getColumnName() {

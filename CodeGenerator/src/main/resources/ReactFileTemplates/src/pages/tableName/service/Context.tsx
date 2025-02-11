@@ -107,7 +107,7 @@ export const #{FUL_TABLE_NAME}#ContextProvider: FC<#{FUL_TABLE_NAME}#Props> = ({
   const { filterSpecification, sortingColumns, setFilterSpecification, changeFilterCriteria, changeColumnSort, changePaginationPage, clearFilters } =
     useFilterAndSort();
 
-  const load#{FUL_TABLE_NAME}#esQueryKey: QueryKey = ["getData", filterSpecification];
+  const load#{FUL_TABLE_NAME}#esQueryKey: QueryKey = ["getData#{FUL_TABLE_NAME}#", filterSpecification];
 
   const {
     refetch,
@@ -132,7 +132,7 @@ export const #{FUL_TABLE_NAME}#ContextProvider: FC<#{FUL_TABLE_NAME}#Props> = ({
     setNumberOfPages(#{FLL_TABLE_NAME}#esData.totalPages);
   }, [#{FLL_TABLE_NAME}#esData]);
 
-  const loadSingle#{FUL_TABLE_NAME}#QueryKey: QueryKey = ["getById", objectId];
+  const loadSingle#{FUL_TABLE_NAME}#QueryKey: QueryKey = ["get#{FUL_TABLE_NAME}#ById", objectId];
 
   const { data: singleObjectData, error: singleObjectError } = useQuery({
     queryKey: loadSingle#{FUL_TABLE_NAME}#QueryKey,

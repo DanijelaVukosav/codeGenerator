@@ -47,7 +47,7 @@ public class ReplaceReactPlaceholders {
             for (Column column : table.getColumns()) {
                 if (column.isPrimaryKey()) {
                     returnString = returnString.replaceAll(ReactGeneratorConstantRegex.TABLE_PRIMARY_KEY_COLUMN,
-                            column.getColumnName());
+                            column.getCamelColumnName());
                 }
 
             }
@@ -112,10 +112,10 @@ public class ReplaceReactPlaceholders {
             returnString = "";
         } else if (codeLine.contains(ReactGeneratorConstant.MAP_COLUMNS_IN_TYPE_FIELDS)) {
             for (Column column : table.getColumns()) {
-                String attribute = column.getColumnName();
+                String attribute = column.getCamelColumnName();
                 attribute += "? : ";
                 if (Objects.equals(column.getColumnType(), UtilConstants.ENUM_TYPE)) {
-                    attribute += GeneratorUtils.firstLatterToUppercase(table.getTableName()) + GeneratorUtils.firstLatterToUppercase(column.getColumnName()) + "Type";
+                    attribute += GeneratorUtils.firstLatterToUppercase(table.getTableName()) + GeneratorUtils.firstLatterToUppercase(column.getCamelColumnName()) + "Type";
                 } else {
                     attribute += column.getMappedType() + ";";
                 }
@@ -123,7 +123,7 @@ public class ReplaceReactPlaceholders {
 
                 if (column.isForeignKey()) {
                     String foreignAttribute = GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getColumnName() + "? : "
+                            + column.getCamelColumnName() + "? : "
                             + GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()) + ";";
                     returnValue.add(foreignAttribute);
                 }
@@ -153,7 +153,7 @@ public class ReplaceReactPlaceholders {
                     for (Column column : referenceTable.getColumns()) {
                         if (column.isForeignKey() && Objects.equals(column.getForeignTableName(), table.getTableName())) {
                             predefinedFilterCriteria.append("{\n" + "              key: \"")
-                                    .append(column.getColumnName()).append("\",\n")
+                                    .append(column.getCamelColumnName()).append("\",\n")
                                     .append("              operation: FilterCriteriaOperator.EQUALS,\n")
                                     .append("              type: \"").append(column.getMappedType())
                                     .append("\",\n").append("              value: singleObject?.")
@@ -172,7 +172,7 @@ public class ReplaceReactPlaceholders {
                 String templateString = "<TABLE_PAGE objectId={singleObject?.TABLE_COLUMN} simpleView={true} />";
                 if (column.isForeignKey()) {
                     templateString = templateString.replaceAll("TABLE_PAGE", getTablePage(column.getForeignTableName()));
-                    templateString = templateString.replaceAll("TABLE_COLUMN", column.getColumnName());
+                    templateString = templateString.replaceAll("TABLE_COLUMN", column.getCamelColumnName());
                     returnValue.add(templateString);
                 }
             }
@@ -191,7 +191,7 @@ public class ReplaceReactPlaceholders {
             for (Column column : table.getColumns()) {
                 if (column.isForeignKey()) {
                     foreignColumns.add(GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getColumnName());
+                            + column.getCamelColumnName());
                 }
             }
             if (!foreignColumns.isEmpty()) {
@@ -205,7 +205,7 @@ public class ReplaceReactPlaceholders {
                             "      setErrorMessage(\"FOREIGN_TABLE_NAME is required!\");\n" +
                             "      return;\n" +
                             "    }";
-                    templateString = templateString.replaceAll("COLUMN_NAME", column.getColumnName());
+                    templateString = templateString.replaceAll("COLUMN_NAME", column.getCamelColumnName());
                     templateString = templateString.replaceAll("FOREIGN_TABLE_NAME", column.getForeignTableName());
                     returnValue.add(templateString);
                 }
@@ -220,13 +220,13 @@ public class ReplaceReactPlaceholders {
                             "        isEditMode={isEditMode}\n" +
                             "        selectedObjectLabel={FOREIGN_TABLE_OBJECT?.FOREIGN_COLUMN_NAME?.toString() ?? editCURRENT_FU_TABLE_NAME?.CURRENT_COLUMN_NAME?.toString()}\n" +
                             "      />";
-                    templateString = templateString.replaceAll("CURRENT_COLUMN_NAME", column.getColumnName());
+                    templateString = templateString.replaceAll("CURRENT_COLUMN_NAME", column.getCamelColumnName());
                     templateString = templateString.replaceAll("CURRENT_FU_TABLE_NAME", GeneratorUtils.firstLatterToUppercase(table.getTableName()));
                     templateString = templateString.replaceAll("FOREIGN_TABLE_NAME", column.getForeignTableName());
                     templateString = templateString.replaceAll("FOREIGN_COLUMN_NAME", column.getForeignColumnName());
                     templateString = templateString.replaceAll("FOREIGN_FU_TABLE_NAME", GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()));
                     templateString = templateString.replaceAll("FOREIGN_TABLE_OBJECT", GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getColumnName());
+                            + column.getCamelColumnName());
 
                     returnValue.add(templateString);
                 }
@@ -248,13 +248,13 @@ public class ReplaceReactPlaceholders {
                             "          />\n" +
                             "        </Box>\n" +
                             "      </Modal>";
-                    templateString = templateString.replaceAll("CURRENT_COLUMN_NAME", column.getColumnName());
+                    templateString = templateString.replaceAll("CURRENT_COLUMN_NAME", column.getCamelColumnName());
                     templateString = templateString.replaceAll("CURRENT_FU_TABLE_NAME", GeneratorUtils.firstLatterToUppercase(table.getTableName()));
                     templateString = templateString.replaceAll("FOREIGN_TABLE_NAME", column.getForeignTableName());
                     templateString = templateString.replaceAll("FOREIGN_COLUMN_NAME", column.getForeignColumnName());
                     templateString = templateString.replaceAll("FOREIGN_FU_TABLE_NAME", GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()));
                     templateString = templateString.replaceAll("FOREIGN_TABLE_OBJECT", GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getColumnName());
+                            + column.getCamelColumnName());
 
                     returnValue.add(templateString);
                 }
@@ -264,7 +264,7 @@ public class ReplaceReactPlaceholders {
             for (Column column : table.getColumns()) {
                 if (Objects.equals(column.getColumnType(), UtilConstants.ENUM_TYPE)) {
                     StringBuilder enumType = new StringBuilder();
-                    enumType.append("export enum ").append(GeneratorUtils.firstLatterToUppercase(table.getTableName())).append(GeneratorUtils.firstLatterToUppercase(column.getColumnName())).append("Type {\n");
+                    enumType.append("export enum ").append(GeneratorUtils.firstLatterToUppercase(table.getTableName())).append(GeneratorUtils.firstLatterToUppercase(column.getCamelColumnName())).append("Type {\n");
                     for (String enumValue : column.getEnumTypeValues()) {
                         enumType.append("_").append(enumValue).append(" = ").append("\"").append(enumValue).append("\",");
                     }
@@ -280,14 +280,14 @@ public class ReplaceReactPlaceholders {
             for (Column column : table.getColumns()) {
                 String inputType = TypeGenerator.mapSQLtypeToInputType.get(column.getColumnType());
                 tableConfiguration.append("{\n");
-                tableConfiguration.append("key: \"").append(column.getColumnName()).append("\",\n");
+                tableConfiguration.append("key: \"").append(column.getCamelColumnName()).append("\",\n");
                 tableConfiguration.append("label: \"").append(column.getDisplayName()).append("\",\n");
                 tableConfiguration.append("hasSort: ").append(column.getHasSort().toString()).append(",\n");
                 tableConfiguration.append("hasFilter: ").append(column.getHasFilter().toString()).append(",\n");
                 tableConfiguration.append("type: COLUMN_TYPE.").append((inputType != null ? inputType : "text").toUpperCase()).append(",\n");
                 tableConfiguration.append("isVisibleOnTable: ").append(column.getVisible().toString()).append(",\n");
                 if (Objects.equals(column.getColumnType(), UtilConstants.ENUM_TYPE)) {
-                    tableConfiguration.append("options: Object.values(").append(GeneratorUtils.firstLatterToUppercase(table.getTableName())).append(GeneratorUtils.firstLatterToUppercase(column.getColumnName())).append("Type),\n");
+                    tableConfiguration.append("options: Object.values(").append(GeneratorUtils.firstLatterToUppercase(table.getTableName())).append(GeneratorUtils.firstLatterToUppercase(column.getCamelColumnName())).append("Type),\n");
                 }
                 tableConfiguration.append("isVisibleOnSinglePage: ").append(column.getVisibleOnSinglePage()).append(",\n");
                 tableConfiguration.append("placeholder: \"").append("\",\n");
@@ -314,11 +314,11 @@ public class ReplaceReactPlaceholders {
                      * if (column.isAutoIncrement() || column.isNullable() || column.isPrimaryKey())
                      * attribute += "? ";
                      */
-                    tableCell = tableCell.replace("COLUMN_NAME", column.getColumnName().toUpperCase());
+                    tableCell = tableCell.replace("COLUMN_NAME", column.getCamelColumnName().toUpperCase());
                     if (column.getColumnType().equals("DATE")) {
-                        tableCell = tableCell.replaceAll("column_name", column.getColumnName() + ".toString()");
+                        tableCell = tableCell.replaceAll("column_name", column.getCamelColumnName() + ".toString()");
                     } else {
-                        tableCell = tableCell.replaceAll("column_name", column.getColumnName());
+                        tableCell = tableCell.replaceAll("column_name", column.getCamelColumnName());
                     }
                     returnValue.add(tableCell);
                 }

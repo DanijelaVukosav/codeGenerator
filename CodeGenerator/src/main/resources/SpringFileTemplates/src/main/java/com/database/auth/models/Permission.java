@@ -10,7 +10,6 @@ public class Permission {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-//    @Column(length = 200)
     private PermissionEnum name;
 
     public Permission() {
