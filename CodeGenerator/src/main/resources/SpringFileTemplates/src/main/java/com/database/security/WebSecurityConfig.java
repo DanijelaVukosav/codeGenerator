@@ -1,6 +1,9 @@
 package com.#{ALL_SCHEMA_NAME}#.api.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.#{ALL_SCHEMA_NAME}#.api.security.jwt.AuthEntryPointJwt;
+import com.#{ALL_SCHEMA_NAME}#.api.security.jwt.AuthTokenFilter;
+import com.#{ALL_SCHEMA_NAME}#.api.security.jwt.CustomAccessDeniedHandler;
+import com.#{ALL_SCHEMA_NAME}#.api.security.services.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,27 +11,29 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.#{ALL_SCHEMA_NAME}#.api.security.jwt.AuthEntryPointJwt;
-import com.#{ALL_SCHEMA_NAME}#.api.security.jwt.AuthTokenFilter;
-import com.#{ALL_SCHEMA_NAME}#.api.security.services.UserDetailsServiceImpl;
-
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
-
     private final AuthEntryPointJwt unauthorizedHandler;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService,
+                             AuthEntryPointJwt unauthorizedHandler,
+                             CustomAccessDeniedHandler accessDeniedHandler) {
         this.userDetailsService = userDetailsService;
         this.unauthorizedHandler = unauthorizedHandler;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -59,11 +64,22 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.accessDeniedHandler(unauthorizedHandler))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((AuthenticationEntryPoint) unauthorizedHandler)
+                        .accessDeniedHandler(accessDeniedHandler)) // Add this line for 403 handling
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/test/**").permitAll()
+                        auth.requestMatchers(
+                                        "/api/auth/**",
+                                        "/api/test/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/index.html",
+                                        "/swagger-resources/**",
+                                        "/webjars/**"
+                                ).permitAll()
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Example role-based access
                                 .anyRequest().authenticated()
                 );
 
@@ -74,4 +90,3 @@ public class WebSecurityConfig {
         return http.build();
     }
 }
-

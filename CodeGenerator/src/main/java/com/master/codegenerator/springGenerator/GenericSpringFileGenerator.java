@@ -110,6 +110,7 @@ public class GenericSpringFileGenerator {
                 "auth" + File.separator + "service" + File.separator + "PermissionService.java",
                 "auth" + File.separator + "service" + File.separator + "UserService.java",
                 "security" + File.separator + "jwt" + File.separator + "AuthEntryPointJwt.java",
+                "security" + File.separator + "jwt" + File.separator + "CustomAccessDeniedHandler.java",
                 "security" + File.separator + "jwt" + File.separator + "AuthTokenFilter.java",
                 "security" + File.separator + "jwt" + File.separator + "JwtUtils.java",
                 "security" + File.separator + "services" + File.separator + "RefreshTokenService.java",
