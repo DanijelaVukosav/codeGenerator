@@ -31,7 +31,7 @@ public class ParseSQLFile {
 
                 TableParser.generateTables(reader, tables, mapOfTableRelationships, databaseName);
 
-                return new ResponseEntity<>(new SchemaData(tables, mapOfTableRelationships, databaseName.toString()), HttpStatus.OK);
+                return new ResponseEntity<>(new SchemaData(tables, mapOfTableRelationships, databaseName.toString(), true, true), HttpStatus.OK);
             } catch (IOException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }

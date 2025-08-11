@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FC, useContext, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { #{FUL_TABLE_NAME}#, #{FUL_TABLE_NAME}#Columns } from "../types";
 import { #{FUL_TABLE_NAME}#Context } from "../service/#{FUL_TABLE_NAME}#Context";
@@ -22,6 +22,12 @@ const #{FUL_TABLE_NAME}#Data: FC = () => {
     return tabs;
   }, [ability, singleObject]);
 
+  const onEditClick = useCallback(()=>{
+    if (singleObject) {
+      openEdit#{FUL_TABLE_NAME}#Modal(singleObject);
+    }
+  },[singleObject, openEdit#{FUL_TABLE_NAME}#Modal]);
+
   return (
     <React.Fragment>
       {Boolean(singleObject) && (
@@ -34,9 +40,7 @@ const #{FUL_TABLE_NAME}#Data: FC = () => {
                   <div>
                     <EditButton
                         abilitySubject={"#{AUL_TABLE_NAME}#_UPDATE"}
-                        onClick={() => {
-                          singleObject && openEdit#{FUL_TABLE_NAME}#Modal(singleObject);
-                        }}
+                        onClick={onEditClick}
                         customStyle={"width_80px"}
                     >
                       Edit

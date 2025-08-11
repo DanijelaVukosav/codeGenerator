@@ -1,75 +1,47 @@
-export type Roles = Record<string, string[]>;
+import { CustomObjectType } from '../api/generalService/types';
 
-export const USER_LOCAL_STORAGE_KEY = "USER_TOKENS";
+export const USER_LOCAL_STORAGE_KEY = 'USER_TOKENS';
 
-export interface SystemUser {
+export interface SystemUserPermission extends CustomObjectType {
+  id: number;
+  name: string;
+}
+
+export interface SystemUser extends CustomObjectType {
   id: number;
   username: string;
   email: string;
-  name: string;
-  casl: string[];
-  email_verified: boolean;
-  family_name: string;
-  given_name: string;
-  preferred_username: string;
-  sub: string;
   can: UserAbilities[];
-  authorities: any;
+  authorities: string[];
   superUser?: boolean;
   activate: boolean;
   password?: string;
-  permissions: string[];
+  permissions: SystemUserPermission[] | string[];
 }
 
 export interface SystemUserData {
   id: number;
   username: string;
   email: string;
-  name: string;
-  casl: string[];
-  email_verified: boolean;
-  family_name: string;
-  given_name: string;
-  preferred_username: string;
-  sub: string;
   can: UserAbilities[];
-  authorities: any;
+  authorities: string[];
   superUser?: boolean;
   activate: boolean;
   password?: string;
   permissions: { id: string; name: string }[];
 }
 
-export const initialSystemUser: SystemUser = {
-  id: 0,
-  username: "",
-  email: "",
-  name: "",
-  casl: [],
-  email_verified: false,
-  family_name: "",
-  given_name: "",
-  preferred_username: "",
-  sub: "",
-  can: [],
-  authorities: [],
-  superUser: false,
-  activate: false,
-  password: "",
-  permissions: [],
-};
-
-export type SystemUsersResponseData = {
+export interface SystemUsersResponseData {
   content: SystemUserData[];
   totalPages: number;
-};
+}
 
-export type AuthObject = {
+export interface AuthObject {
   accessToken?: string;
   refreshToken?: string;
-};
+}
 
-export interface UserAbilities {
+export interface UserAbilities extends CustomObjectType {
   subject: string;
-  actions: string[];
+  action: string[];
 }

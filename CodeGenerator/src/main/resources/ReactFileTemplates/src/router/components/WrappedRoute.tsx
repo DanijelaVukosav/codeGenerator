@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAbility } from "../casl/AbilityContext";
 import { useUser } from "../../authService/UserProvider";
 
-type AuthCheckerProps = {
+interface AuthCheckerProps {
   subject?: string;
   bypassCasl?: boolean;
   onlyForSuperUser?: boolean;

@@ -3,7 +3,7 @@ import { FC } from "react";
 
 export const FormForeignObjectField: FC<{
   label: string;
-  onClick: any;
+  onClick: () => void;
   isEditMode?: boolean;
   selectedObjectLabel?: string;
 }> = ({ label, onClick, isEditMode, selectedObjectLabel }) => {

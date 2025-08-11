@@ -1,7 +1,7 @@
-import React, { useState, FC } from "react";
+import React, { useState, FC, MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-import AuthService from "../authService/userService";
+import AuthService, { LoginResponse } from "../authService/userService";
 import "../styles/login.css";
 import { useUser } from "../authService/UserProvider";
 import { useAbility } from "../router/casl/AbilityContext";
@@ -21,20 +21,21 @@ export const Login: FC = () => {
   const [message, setMessage] = useState("");
 
   const [isVisibleActivateForm, setVisibleActivateForm] = useState(false);
-  const [loginResponse, setLoginResponse] = useState<any>();
+  const [loginResponse, setLoginResponse] = useState<LoginResponse>();
 
   const loginUser = (userData: any) => {
     const userWithRoles: SystemUser = {
       ...userData,
+      permissions: userData.authorities,
       can: userData.authorities.map((authority: string) => {
-        return { subject: authority, action: authority };
-      }),
+        return { subject: authority, action: [authority] };
+      })
     };
 
     ability.update(userWithRoles.can as any);
-    login(userWithRoles, { accessToken: userData.accessToken, refreshToken: userData.refreshToken });
+    login(userWithRoles, { accessToken: userData.accessToken });
   };
-  const handleLogin = (event: any) => {
+  const handleLogin = (event: MouseEvent) => {
     event.preventDefault();
     setMessage("");
     AuthService.login(username, password).then(
@@ -53,8 +54,14 @@ export const Login: FC = () => {
       },
     );
   };
-  const handleActivate = (event: any) => {
+  const handleActivate = (event: MouseEvent) => {
     event.preventDefault();
+
+    if (!loginResponse) {
+      setMessage('Something went wrong!');
+      return;
+    }
+
     setMessage("");
     AuthService.activateAccount(newPassword, loginResponse?.id, loginResponse?.accessToken).then(
       () => {
@@ -141,7 +148,7 @@ export const Login: FC = () => {
             </div>
             <div className="input_container">
               <label className="input_label" htmlFor="confirmNewPassword">
-                Password
+                Confirm Password
               </label>
               <img src={"/svg/new-password.svg"} alt={"password"} />
               <input type="password" name="fakePassword" style={{ display: "none" }} />

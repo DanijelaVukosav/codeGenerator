@@ -4,8 +4,9 @@ import "../../../styles/form.css";
 import "../../../styles/modal.css";
 import { use#{FUL_TABLE_NAME}#Service } from "../service/#{FUL_TABLE_NAME}#Service";
 import { #{FUL_TABLE_NAME}#Context } from "../service/#{FUL_TABLE_NAME}#Context";
-import { FormContainer, FormErrorMessage, FormSubmitButton, FormTitle } from "../../../generalComponents/form/FormComponents";
+import { FormContainer, FormErrorMessage, FormSubmitButton, FormTitle, GLOBAL_BOX_STYLE } from "../../../generalComponents/form/FormComponents";
 import { #{FUL_TABLE_NAME}#, #{FUL_TABLE_NAME}#Columns } from "../types";
+import { AxiosError } from 'axios';
 
 import * as toastr from "toastr";
 import { FormForeignObjectField } from "../../../generalComponents/form/FormForeignObjectField";
@@ -19,17 +20,6 @@ import { Box, Modal } from "@mui/material";
 export const #{FUL_TABLE_NAME}#Form: FC = () => {
   const { edit#{FUL_TABLE_NAME}#, handleSubmitNew#{FUL_TABLE_NAME}#, handleEdit#{FUL_TABLE_NAME}# } = useContext(#{FUL_TABLE_NAME}#Context);
   const { create, update } = use#{FUL_TABLE_NAME}#Service();
-
-  const boxStyle = useMemo(() => {
-    return {
-      width: "70vw",
-      height: "70vh",
-      bgcolor: "background.paper",
-      boxShadow: 24,
-      p: 4,
-      overflow: "auto",
-    };
-  }, []);
 
   const {
     register,
@@ -55,7 +45,7 @@ export const #{FUL_TABLE_NAME}#Form: FC = () => {
       handleSubmitNew#{FUL_TABLE_NAME}#(data);
       toastr.success("Successfully created.");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       const resMessage = error.message || error.toString();
       setErrorMessage(resMessage);
       toastr.error(resMessage);
@@ -68,7 +58,7 @@ export const #{FUL_TABLE_NAME}#Form: FC = () => {
       handleEdit#{FUL_TABLE_NAME}#?.(data);
       toastr.success("Successfully updated.");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       const resMessage = error.message || error.toString();
       setErrorMessage(resMessage);
       toastr.error(resMessage);

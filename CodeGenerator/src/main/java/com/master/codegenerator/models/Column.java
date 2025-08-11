@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Column {
 
     private String columnName;
+    private String camelColumnName;
     private String columnType;
     private int columnSize;
     private boolean nullable;

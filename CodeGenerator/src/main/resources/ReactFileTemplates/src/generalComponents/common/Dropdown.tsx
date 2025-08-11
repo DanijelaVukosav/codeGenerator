@@ -9,14 +9,14 @@ const Dropdown: FC<{
   onChange: (option: string) => void;
 }> = ({ options, isPositionBottom = false, defaultSelectedOption, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<any>(defaultSelectedOption);
+  const [selectedOption, setSelectedOption] = useState<string>(defaultSelectedOption);
   const dropdownRef = useRef(null);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSelect = (option: any) => {
+  const handleSelect = (option: string) => {
     setSelectedOption(option);
     onChange(option);
     setIsOpen(false);

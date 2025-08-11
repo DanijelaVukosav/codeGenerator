@@ -41,10 +41,11 @@ export const useFilterAndSort: (predefinedFilterCriteria?: FilterCriteria) => Fi
         });
         return;
       }
-      if (page - 1 !== filterSpecification.page)
-        setFilterSpecification((state) => {
-          return { ...state, page: page - 1 };
-        });
+      if (page - 1 !== filterSpecification.page) {
+          setFilterSpecification((state) => {
+              return {...state, page: page - 1};
+          });
+      }
     },
     [setFilterSpecification, filterSpecification.page],
   );
@@ -54,8 +55,12 @@ export const useFilterAndSort: (predefinedFilterCriteria?: FilterCriteria) => Fi
       const sortDirection = sortingColumns.get(columnName);
       if (!sortDirection) {
         sortingColumns.set(columnName, SortDirection.ASC);
-      } else if (sortDirection === SortDirection.ASC) sortingColumns.set(columnName, SortDirection.DESC);
-      else sortingColumns.delete(columnName);
+      } else if (sortDirection === SortDirection.ASC) {
+          sortingColumns.set(columnName, SortDirection.DESC);
+      }
+      else {
+          sortingColumns.delete(columnName);
+      }
 
       const sortArray: string[] = [];
       sortingColumns.forEach((value, key) => {

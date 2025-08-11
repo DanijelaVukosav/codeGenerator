@@ -9,6 +9,7 @@ import toastr from "toastr";
 import { FormContainer, FormErrorMessage, FormSubmitButton, FormTitle } from "../../generalComponents/form/FormComponents";
 import { FormBody } from "../../generalComponents/form/FormBody";
 import { SystemUserColumns } from "../types";
+import { AxiosError } from 'axios';
 
 export const SystemUserForm: FC = () => {
   const { editUser, handleSubmitNewAccount, handleEditSystemUser } = useContext(SystemUserContext);
@@ -34,7 +35,7 @@ export const SystemUserForm: FC = () => {
       toastr.success("Successfully created.");
       handleSubmitNewAccount(data);
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       const resMessage = error.message || error.toString();
       setErrorMessage(resMessage);
       toastr.error(resMessage);
@@ -47,7 +48,7 @@ export const SystemUserForm: FC = () => {
       handleEditSystemUser?.(data);
       toastr.success("Successfully updated.");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       const resMessage = error.message || error.toString();
       setErrorMessage(resMessage);
       toastr.error(resMessage);

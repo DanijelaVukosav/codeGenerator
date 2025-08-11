@@ -22,8 +22,8 @@ import java.util.List;
 
 @Entity
 #{ADD_AUDIT_CLASS_DECORATOR}#
-@Table(name = "#{TABLE_NAME}#")
-@SQLDelete(sql = "UPDATE #{TABLE_NAME}# SET is_deleted = true WHERE id=?")
+@Table(name = "#{ALL_TABLE_NAME}#")
+@SQLDelete(sql = "UPDATE #{ALL_TABLE_NAME}# SET is_deleted = true WHERE id=?")
 @SQLRestriction(value = "is_deleted=false")
 public class #{FUL_TABLE_NAME}# implements Serializable {
         @Serial

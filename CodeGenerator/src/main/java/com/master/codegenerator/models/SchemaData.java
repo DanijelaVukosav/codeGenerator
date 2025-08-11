@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class SchemaData {
+    boolean enabledBackend;
+    boolean enabledFrontend;
     HashMap<String, Table> tables;
     HashMap<String, ArrayList<String>> mapOfTableRelationships;
     String databaseName;
@@ -13,17 +15,24 @@ public class SchemaData {
         databaseName = "";
         tables = new HashMap<>();
         mapOfTableRelationships = new HashMap<>();
+        enabledBackend = true;
+        enabledFrontend = true;
+
     }
-    public SchemaData(String databaseName, HashMap<String, Table> tables) {
+    public SchemaData(String databaseName, HashMap<String, Table> tables, boolean enabledBackend, boolean enabledFrontend) {
         this.databaseName = databaseName;
         this.tables = tables;
         this.mapOfTableRelationships = new HashMap<>();
+        this.enabledBackend = enabledBackend;
+        this.enabledFrontend = enabledFrontend;
     }
 
-    public SchemaData(HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships, String databaseName) {
+    public SchemaData(HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships, String databaseName, boolean enabledBackend, boolean enabledFrontend) {
         this.tables = tables;
         this.mapOfTableRelationships = mapOfTableRelationships;
         this.databaseName = databaseName;
+        this.enabledBackend = enabledBackend;
+        this.enabledFrontend = enabledFrontend;
     }
 
     public HashMap<String, Table> getTables() {
@@ -70,5 +79,21 @@ public class SchemaData {
     }
     public void setTableRelationships(String tableName, ArrayList<String> relatedTables) {
         mapOfTableRelationships.put(tableName, relatedTables);
+    }
+
+    public boolean isEnabledFrontend() {
+        return enabledFrontend;
+    }
+
+    public void setEnabledFrontend(boolean enabledFrontend) {
+        this.enabledFrontend = enabledFrontend;
+    }
+
+    public boolean isEnabledBackend() {
+        return enabledBackend;
+    }
+
+    public void setEnabledBackend(boolean enabledBackend) {
+        this.enabledBackend = enabledBackend;
     }
 }

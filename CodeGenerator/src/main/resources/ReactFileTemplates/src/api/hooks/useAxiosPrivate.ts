@@ -20,7 +20,7 @@ const useAxiosPrivate = () => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         if (!authRef?.current || isEmpty(authRef.current)) return config;
-        config.headers["Authorization"] = `Bearer ${authRef?.current?.accessToken}`;
+        config.headers.Authorization = `Bearer ${authRef?.current?.accessToken}`;
         return config;
       },
       (error) => Promise.reject(error),
@@ -35,7 +35,7 @@ const useAxiosPrivate = () => {
           const newAccessToken = await refresh();
           if (newAccessToken) {
             authRef.current = { accessToken: newAccessToken };
-            prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+            prevRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return axiosPrivate(prevRequest);
           }
         }

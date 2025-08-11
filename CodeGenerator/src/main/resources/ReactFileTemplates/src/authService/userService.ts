@@ -2,8 +2,20 @@ import axios from "../api/axios";
 import { USER_LOCAL_STORAGE_KEY } from "./types";
 import { API_ROUTES } from "../api/apiRoutes";
 
+export interface LoginResponse {
+  refreshToken: string | null;
+  id: number;
+  username: string;
+  email: string;
+  superUser: boolean;
+  authorities: string[];
+  accessToken: string;
+  tokenType: string;
+  activate: boolean;
+}
+
 const login = async (username: string, password: string) => {
-  const response = await axios.post(
+  const response = await axios.post<LoginResponse>(
     API_ROUTES.LOGIN,
     {
       username,
@@ -16,7 +28,7 @@ const login = async (username: string, password: string) => {
   return response.data;
 };
 const activateAccount = async (newPassword: string, id: number, accessToken: string) => {
-  return await axios.post(
+  return axios.post(
     API_ROUTES.SYSTEM_USER_ACTIVATE,
     {
       newPassword,

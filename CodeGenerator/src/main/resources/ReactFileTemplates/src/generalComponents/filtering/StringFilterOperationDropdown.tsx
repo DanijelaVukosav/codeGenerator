@@ -1,19 +1,35 @@
-import React from "react";
-import { FilterCriteriaOperator } from "../../api/generalService/types";
-import { FieldValues, UseFormWatch } from "react-hook-form";
-import "../../styles/utils.css";
-import "../../styles/filterContainer.css";
-import { OptionDropdown } from "./OptionDropdown";
+import React from 'react';
+import { FilterCriteriaOperator } from '../../api/generalService/types';
+import { FieldValues, UseFormWatch, UseFormSetValue, Path } from 'react-hook-form';
+import '../../styles/utils.css';
+import '../../styles/filterContainer.css';
+import { OptionDropdown } from './OptionDropdown';
 
-interface FilterOperationDropdownProps {
-  id: string;
-  isDisabled?: boolean;
-  watch: UseFormWatch<FieldValues>;
-  setValue: any;
+interface FilterOperationDropdownProps<TFormValues extends FieldValues = FieldValues> {
+    id: Path<TFormValues>;
+    isDisabled?: boolean;
+    watch: UseFormWatch<TFormValues>;
+    setValue: UseFormSetValue<TFormValues>;
 }
 
-const STRING_FILTER_FILTER_OPTIONS_ARRAY = [FilterCriteriaOperator.EQUALS, FilterCriteriaOperator.CONTAINS];
+const STRING_FILTER_FILTER_OPTIONS_ARRAY = [
+    FilterCriteriaOperator.EQUALS,
+    FilterCriteriaOperator.CONTAINS
+];
 
-export const StringFilterOperationDropdown: React.FunctionComponent<FilterOperationDropdownProps> = ({ id, isDisabled, watch, setValue }) => {
-  return <OptionDropdown id={id} isDisabled={isDisabled} watch={watch} setValue={setValue} options={STRING_FILTER_FILTER_OPTIONS_ARRAY} />;
+export const StringFilterOperationDropdown = <TFormValues extends FieldValues = FieldValues>({
+    id,
+    isDisabled,
+    watch,
+    setValue
+}: FilterOperationDropdownProps<TFormValues>) => {
+    return (
+        <OptionDropdown
+            id={id}
+            isDisabled={isDisabled}
+            watch={watch}
+            setValue={setValue}
+            options={STRING_FILTER_FILTER_OPTIONS_ARRAY}
+        />
+    );
 };

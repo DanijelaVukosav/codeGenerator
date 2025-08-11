@@ -5,7 +5,7 @@ import { SystemUser } from "../authService/types";
 import { useSystemUsersService } from "../systemUsers/service/SystemUserService";
 import { useQuery } from "@tanstack/react-query";
 
-type Props = {
+interface Props {
   object?: SystemUser;
   onSuccessfulSubmit: (user: SystemUser) => void;
   onSuccessfulEdit?: (user: SystemUser) => void;
@@ -103,7 +103,7 @@ export const RegisterComponent: FC<Props> = ({ onSuccessfulSubmit, object, onSuc
           <div className="checkbox_wrapper">
             {allPermissions?.map((permission) => {
               return (
-                <div className="checkbox_group">
+                <div key={`${permission}_wrapper`} className="checkbox_group">
                   <input
                     type="checkbox"
                     className="input_field"
@@ -111,9 +111,11 @@ export const RegisterComponent: FC<Props> = ({ onSuccessfulSubmit, object, onSuc
                     id={"permission+" + permission}
                     {...register("permissions")}
                     value={permission}
-                    defaultChecked={object?.permissions?.some((permiss: string) => {
-                      return permiss === permission;
-                    })}
+                    defaultChecked={(object?.permissions as string[])?.some(
+                        (permiss: string) => {
+                          return permiss === permission;
+                        }
+                    )}
                   />
 
                   <label className="input_label" style={{ display: "inline-block", marginBottom: "5px" }} id={"permission+" + permission}>

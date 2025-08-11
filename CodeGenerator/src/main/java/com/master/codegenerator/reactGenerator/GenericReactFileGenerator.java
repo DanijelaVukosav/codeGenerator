@@ -51,7 +51,7 @@ public class GenericReactFileGenerator {
                 "new-password.svg", "no-icon.svg", "sort.svg", "welcome-screen.png"};
         copyFilesFromGenericFolder("public" + File.separator + "svg", filesInPublicSvg);
 
-        String[] filesInRootFolder = {"package.json", "package-lock.json", "README.md", "tsconfig.json"};
+        String[] filesInRootFolder = {"package.json", "README.md", "tsconfig.json", ".prettierignore", ".prettierrc", ".eslintignore", ".eslintrc.cjs"};
         copyFilesFromGenericFolder("", filesInRootFolder);
 
         String[] foldersInSrc = {"api", "authService", "generalComponents", "hooks", "loginComponents", "pages", "router", "styles", "systemUsers"};
@@ -85,10 +85,10 @@ public class GenericReactFileGenerator {
         String[] foldersInSrcGeneralComponents = {"common", "filtering", "form", "index", "sidebar", "singlePage"};
         generateFolders("src" + File.separator + "generalComponents", foldersInSrcGeneralComponents);
 
-        String[] filesInGeneralComponentsCommon = {"Button.tsx", "CustomModal.tsx", "Dropdown.tsx", "GeneralInput.tsx", "PageLoader.tsx", "Sort.tsx", "TableUtils.tsx", "Wrappers.tsx"};
+        String[] filesInGeneralComponentsCommon = {"Button.tsx", "CustomModal.tsx", "Dropdown.tsx", "PageLoader.tsx", "Sort.tsx", "TableUtils.tsx", "Wrappers.tsx"};
         copyFilesFromGenericFolder("src" + File.separator + "generalComponents" + File.separator + "common", filesInGeneralComponentsCommon);
 
-        String[] filesInGeneralComponentsFiltering = {"ChosenFilterCriteriaContainer.tsx", "FilterCheckboxField.tsx", "FilterComponents.tsx", "FilterContainer.tsx", "FilterInputField.tsx",
+        String[] filesInGeneralComponentsFiltering = {"ChosenFilterCriteriaContainer.tsx", "FilterCheckboxField.tsx", "FilterComponents.tsx", "FilterContainer.tsx", "FilterInputField.tsx", "FilterSelectField.tsx",
                 "FilterNumberInputField.tsx", "OptionDropdown.tsx", "StringFilterOperationDropdown.tsx", "TableFilterFields.tsx", "TimeFilterOperationDropdown.tsx", "utilsFunction.ts"};
         copyFilesFromGenericFolder("src" + File.separator + "generalComponents" + File.separator + "filtering", filesInGeneralComponentsFiltering);
 
@@ -115,7 +115,7 @@ public class GenericReactFileGenerator {
         copyFilesFromGenericFolder("src" + File.separator + "hooks" + File.separator + "utilFunctions", filesInHooksUtilFunctions);
 
 
-        String[] filesInLoginComponents = {"Login.tsx", "RegisterComponent.tsx"};
+        String[] filesInLoginComponents = {"Login.tsx"};
         copyFilesFromGenericFolder("src" + File.separator + "loginComponents", filesInLoginComponents);
 
 
@@ -168,6 +168,7 @@ public class GenericReactFileGenerator {
                     generatedAppFolder + generateRelativeFolderPath(relativeFolderPath) + File.separator + fileName);
             File sourceFile = new File(rootGenericFolder + generateRelativeFolderPath(relativeFolderPath) + File.separator + fileName);
             if (!sourceFile.exists()) {
+                System.out.println("Copying " + fileName + " to " + sourceFile.getAbsolutePath());
                 throw new FileNotFoundException();
             }
             copyFile(sourceFile, destFile);

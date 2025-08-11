@@ -8,7 +8,7 @@ import "../../styles/utils.css";
 import Dropdown from "./Dropdown";
 import { SortDownIcon, SortIcon, SortUpIcon } from "./Sort";
 
-type TablePaginationProps = {
+interface TablePaginationProps {
   numberOfPages: number;
   onPageChange: (page: number) => void;
   pageSize: string;
@@ -34,7 +34,8 @@ export const TablePagination: FC<TablePaginationProps> = ({ numberOfPages, onPag
     </React.Fragment>
   );
 };
-type TableHeaderCelProps = {
+
+interface TableHeaderCelProps {
   label: string;
   hasSort?: boolean;
   sortingDirection?: string;

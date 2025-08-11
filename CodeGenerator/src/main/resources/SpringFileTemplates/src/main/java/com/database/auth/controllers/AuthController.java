@@ -22,6 +22,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,45 +50,75 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
-            System.out.println(encoder.encode(loginRequest.getPassword()));
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
             String jwt = jwtUtils.generateJwtToken(userDetails);
 
-            List<String> authorities = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+            List<String> authorities = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-            return ResponseEntity.ok(new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), userDetails.getSuperUser(), authorities, userDetails.isActivate()));
+            Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/api/auth");
+            cookie.setMaxAge(7 * 24 * 60 * 60);
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok(new JwtResponse(jwt, null, userDetails.getId(), userDetails.getUsername(),
+                    userDetails.getEmail(), userDetails.getSuperUser(), authorities, userDetails.isActivate()));
         } catch (Exception ex) {
             return new ResponseEntity<>(new MessageResponse("Incorrect username or password!"), HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/refreshtoken")
-    public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
-        String requestRefreshToken = request.getRefreshToken();
+    public ResponseEntity<?> refreshtoken(@CookieValue(name = "refreshToken", required = false) String refreshTokenValue) {
+        if (refreshTokenValue == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token missing");
+        }
 
-        return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration).map(RefreshToken::getUser).map(user -> {
-            String token = jwtUtils.generateTokenFromUsername(user.getUsername());
-            RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
-            return ResponseEntity.ok(new TokenRefreshResponse(token, newRefreshToken.getToken()));
-        }).orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+        return refreshTokenService.findByToken(refreshTokenValue)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String newJwt = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+                    Cookie cookie = new Cookie("refreshToken", newRefreshToken.getToken());
+                    cookie.setHttpOnly(true);
+                    cookie.setSecure(true);
+                    cookie.setPath("/api/auth");
+                    cookie.setMaxAge(7 * 24 * 60 * 60);
+                    return ResponseEntity.ok()
+                            .header("Set-Cookie", cookie.toString())
+                            .body(new TokenRefreshResponse(newJwt, null));
+                })
+                .orElseThrow(() -> new TokenRefreshException(refreshTokenValue, "Refresh token is not in database!"));
     }
 
     @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser() {
+    public ResponseEntity<?> logoutUser(HttpServletResponse response) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = userDetails.getId();
         refreshTokenService.deleteByUserId(userId);
+
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/api/auth");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
     }
-
 }

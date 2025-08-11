@@ -180,8 +180,13 @@ public class CommandParser {
         } else if (columnType.toUpperCase().startsWith(UtilConstants.ENUM_TYPE)) {
             column.setColumnType(UtilConstants.ENUM_TYPE);
             column.setEnumTypeValues(parseEnumValues(columnString));
-        } else {
-            column.setColumnType(columnType);
+        } else if (columnType.toUpperCase().startsWith(UtilConstants.TYPE_TEXT)) {
+            column.setColumnType(UtilConstants.TYPE_TEXT);
+            column.setColumnSize(1000);
+        }
+        else {
+            String regularType = columnType.replaceAll(",", "");
+            column.setColumnType(regularType);
         }
 
         column.setNullable(!columnUpperCase.contains(UtilConstants.NOT_NULL));

@@ -10,7 +10,7 @@ import { #{FUL_TABLE_NAME}# } from "./types";
 import { FilterCriteria } from "../../api/generalService/types";
 import { IndexTitle } from "../../generalComponents";
 
-type IndexProps = {
+interface IndexProps {
   objects?: #{FUL_TABLE_NAME}#[];
 
   onRowSelect?: (_#{FLL_TABLE_NAME}#: #{FUL_TABLE_NAME}#) => void;

@@ -88,7 +88,9 @@ public class GenerateCodeFile {
         CompletableFuture<Void> springTask = CompletableFuture.runAsync(() -> {
             try {
                 long startTime = System.nanoTime();
-                new SpringGenerator().generateSpringApplication(data.getTables(), data.getMapOfTableRelationships(), data.getDatabaseName());
+                if(data.isEnabledBackend()) {
+                    new SpringGenerator().generateSpringApplication(data.getTables(), data.getMapOfTableRelationships(), data.getDatabaseName());
+                }
                 long endTime = System.nanoTime();
 
                 double duration = (endTime - startTime) / 1_000_000.0; // Konverzija u milisekunde
@@ -107,7 +109,9 @@ public class GenerateCodeFile {
         CompletableFuture<Void> reactTask = CompletableFuture.runAsync(() -> {
             try {
                 long startTime = System.nanoTime();
-                new ReactGenerator().generateReactApplication(data.getTables(), data.getMapOfTableRelationships(), data.getDatabaseName());
+                if(data.isEnabledFrontend()) {
+                    new ReactGenerator().generateReactApplication(data.getTables(), data.getMapOfTableRelationships(), data.getDatabaseName());
+                }
                 long endTime = System.nanoTime();
                 double duration = (endTime - startTime) / 1_000_000.0; // Konverzija u milisekunde
                 currentReactDuration = duration;

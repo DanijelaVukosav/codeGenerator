@@ -58,7 +58,7 @@ public class ReplaceSpringPlaceholders {
     }
 
     private static String getForeignObjectName(Column column) {
-        return GeneratorUtils.firstLatterToUppercase(column.getForeignTableName())
+        return GeneratorUtils.firstLatterToLowercase(column.getForeignTableName())
                 + GeneratorUtils.firstLatterToUppercase(column.getCamelColumnName());
     }
 
@@ -224,61 +224,65 @@ public class ReplaceSpringPlaceholders {
             finalCodeLines.add("@EntityListeners(AuditingEntityListener.class)");
             codeLine = "";
         } else if (codeLine.contains(SpringGeneratorConstant.MODEL_AUDIT_ATTRIBUTES)) {
-            finalCodeLines.add("@CreatedDate\n" +
-                    "    @Column(\n" +
-                    "            nullable = false,\n" +
-                    "            updatable = false\n" +
-                    "    )\n" +
-                    "    private LocalDateTime createDate;\n" +
-                    "\n" +
-                    "    @LastModifiedDate\n" +
-                    "    @Column(insertable = false)\n" +
-                    "    private LocalDateTime lastModified;\n" +
-                    "\n" +
-                    "\n" +
-                    "    @CreatedBy\n" +
-                    "    @Column(\n" +
-                    "            nullable = false,\n" +
-                    "            updatable = false\n" +
-                    "    )\n" +
-                    "    private String createdBy;\n" +
-                    "\n" +
-                    "    @LastModifiedBy\n" +
-                    "    @Column(insertable = false)\n" +
-                    "    private String lastModifiedBy;");
+            if( table.getHasTableAudit()) {
+                finalCodeLines.add("@CreatedDate\n" +
+                        "    @Column(\n" +
+                        "            nullable = false,\n" +
+                        "            updatable = false\n" +
+                        "    )\n" +
+                        "    private LocalDateTime createDate;\n" +
+                        "\n" +
+                        "    @LastModifiedDate\n" +
+                        "    @Column(insertable = false)\n" +
+                        "    private LocalDateTime lastModified;\n" +
+                        "\n" +
+                        "\n" +
+                        "    @CreatedBy\n" +
+                        "    @Column(\n" +
+                        "            nullable = false,\n" +
+                        "            updatable = false\n" +
+                        "    )\n" +
+                        "    private String createdBy;\n" +
+                        "\n" +
+                        "    @LastModifiedBy\n" +
+                        "    @Column(insertable = false)\n" +
+                        "    private String lastModifiedBy;");
+            }
             codeLine = "";
         } else if (codeLine.contains(SpringGeneratorConstant.MODEL_AUDIT_SETTERS_AND_GETTERS)) {
-            finalCodeLines.add("public LocalDateTime getCreateDate() {\n" +
-                    "        return createDate;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public void setCreateDate(LocalDateTime createDate) {\n" +
-                    "        this.createDate = createDate;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public LocalDateTime getLastModified() {\n" +
-                    "        return lastModified;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public void setLastModified(LocalDateTime lastModified) {\n" +
-                    "        this.lastModified = lastModified;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public String getCreatedBy() {\n" +
-                    "        return createdBy;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public void setCreatedBy(String createdBy) {\n" +
-                    "        this.createdBy = createdBy;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public String getLastModifiedBy() {\n" +
-                    "        return lastModifiedBy;\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public void setLastModifiedBy(String lastModifiedBy) {\n" +
-                    "        this.lastModifiedBy = lastModifiedBy;\n" +
-                    "    }\n");
+            if(table.getHasTableAudit()) {
+                finalCodeLines.add("public LocalDateTime getCreateDate() {\n" +
+                        "        return createDate;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public void setCreateDate(LocalDateTime createDate) {\n" +
+                        "        this.createDate = createDate;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public LocalDateTime getLastModified() {\n" +
+                        "        return lastModified;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public void setLastModified(LocalDateTime lastModified) {\n" +
+                        "        this.lastModified = lastModified;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public String getCreatedBy() {\n" +
+                        "        return createdBy;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public void setCreatedBy(String createdBy) {\n" +
+                        "        this.createdBy = createdBy;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public String getLastModifiedBy() {\n" +
+                        "        return lastModifiedBy;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public void setLastModifiedBy(String lastModifiedBy) {\n" +
+                        "        this.lastModifiedBy = lastModifiedBy;\n" +
+                        "    }\n");
+            }
             codeLine = "";
         } else if (codeLine.contains(SpringGeneratorConstant.MODEL_SETTERS_AND_GETTERS)) {
             for (Column column : table.getColumns()) {

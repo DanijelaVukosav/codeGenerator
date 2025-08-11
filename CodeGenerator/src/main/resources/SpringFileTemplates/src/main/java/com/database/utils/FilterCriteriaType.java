@@ -3,6 +3,7 @@ package com.#{ALL_SCHEMA_NAME}#.api.utils;
 public enum FilterCriteriaType {
     date("date"),
     time("time"),
+    enum_filter("enum_filter"),
     datetime_local("datetime_local"),
     LOCAL_DATE("LOCAL_DATE"),
     LOCAL_TIME("LOCAL_TIME"),

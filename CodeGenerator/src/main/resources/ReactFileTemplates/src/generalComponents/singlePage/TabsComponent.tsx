@@ -1,12 +1,12 @@
 import React, { FC, ReactNode, useState } from "react";
 import "../../styles/singlePage.css";
 
-export type Tab = {
+export interface Tab {
   tabTitle: string;
   tabContent: React.ReactNode;
 };
 
-type PageTabsProps = {
+interface PageTabsProps {
   tabs: Tab[];
 };
 

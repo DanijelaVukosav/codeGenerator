@@ -26,6 +26,11 @@ public class ReplaceReactPlaceholders {
         return GeneratorUtils.firstLatterToUppercase(tableName) + "Page";
     }
 
+    private static String getForeignObjectName(Column column) {
+        return GeneratorUtils.firstLatterToLowercase(column.getForeignTableName())
+                + GeneratorUtils.firstLatterToUppercase(column.getCamelColumnName());
+    }
+
     public static ArrayList<String> replaceGeneratorConstants(Table table, String codeLine, HashMap<String, ArrayList<String>> mapOfTableRelationships, HashMap<String, Table> allTables) {
         String returnString = codeLine;
 
@@ -122,8 +127,7 @@ public class ReplaceReactPlaceholders {
                 returnValue.add(attribute);
 
                 if (column.isForeignKey()) {
-                    String foreignAttribute = GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getCamelColumnName() + "? : "
+                    String foreignAttribute = getForeignObjectName(column) + "? : "
                             + GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()) + ";";
                     returnValue.add(foreignAttribute);
                 }
@@ -134,7 +138,7 @@ public class ReplaceReactPlaceholders {
             ArrayList<String> tempList = mapOfTableRelationships.get(table.getTableName());
             if (tempList != null) {
                 for (String tableName : new HashSet<>(tempList)) {
-                    String templateString = " ability.can(\"AU_TABLE_NAME_READ\", \"AU_TABLE_NAME_READ\") &&\n" +
+                    String templateString = "if( ability.can(\"AU_TABLE_NAME_READ\", \"AU_TABLE_NAME_READ\")) {\n" +
                             "      tabs.push({\n" +
                             "        tabTitle: \"FU_TABLE_NAME\",\n" +
                             "        tabContent: (\n" +
@@ -143,7 +147,8 @@ public class ReplaceReactPlaceholders {
                             "            predefinedFilterCriteria={PREDEFINED_FILTER_CRITERIA}\n" +
                             "          />\n" +
                             "        ),\n" +
-                            "      });";
+                            "      });\n" +
+                            "}";
 
                     templateString = templateString.replace("AU_TABLE_NAME", tableName.toUpperCase());
                     templateString = templateString.replace("FU_TABLE_NAME", StringUtils.firstLatterToUppercase(tableName));
@@ -190,8 +195,7 @@ public class ReplaceReactPlaceholders {
             ArrayList<String> foreignColumns = new ArrayList<>();
             for (Column column : table.getColumns()) {
                 if (column.isForeignKey()) {
-                    foreignColumns.add(GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getCamelColumnName());
+                    foreignColumns.add(getForeignObjectName(column));
                 }
             }
             if (!foreignColumns.isEmpty()) {
@@ -225,8 +229,7 @@ public class ReplaceReactPlaceholders {
                     templateString = templateString.replaceAll("FOREIGN_TABLE_NAME", column.getForeignTableName());
                     templateString = templateString.replaceAll("FOREIGN_COLUMN_NAME", column.getForeignColumnName());
                     templateString = templateString.replaceAll("FOREIGN_FU_TABLE_NAME", GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()));
-                    templateString = templateString.replaceAll("FOREIGN_TABLE_OBJECT", GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getCamelColumnName());
+                    templateString = templateString.replaceAll("FOREIGN_TABLE_OBJECT", getForeignObjectName(column));
 
                     returnValue.add(templateString);
                 }
@@ -236,7 +239,7 @@ public class ReplaceReactPlaceholders {
             for (Column column : table.getColumns()) {
                 if (column.isForeignKey()) {
                     String templateString = "<Modal open={isOpenFOREIGN_FU_TABLE_NAMEModal} onClose={() => setOpenFOREIGN_FU_TABLE_NAMEModal(false)} className={\"center-modal\"} sx={{ overflow: \"auto\" }}>\n" +
-                            "        <Box sx={boxStyle}>\n" +
+                            "        <Box sx={GLOBAL_BOX_STYLE}>\n" +
                             "          <FOREIGN_FU_TABLE_NAMEIndex\n" +
                             "            selectedRowId={FOREIGN_TABLE_OBJECT?.FOREIGN_COLUMN_NAME ?? editCURRENT_FU_TABLE_NAME?.CURRENT_COLUMN_NAME}\n" +
                             "            onRowSelect={(FOREIGN_TABLE_OBJECT: FOREIGN_FU_TABLE_NAME) => {\n" +
@@ -253,8 +256,7 @@ public class ReplaceReactPlaceholders {
                     templateString = templateString.replaceAll("FOREIGN_TABLE_NAME", column.getForeignTableName());
                     templateString = templateString.replaceAll("FOREIGN_COLUMN_NAME", column.getForeignColumnName());
                     templateString = templateString.replaceAll("FOREIGN_FU_TABLE_NAME", GeneratorUtils.firstLatterToUppercase(column.getForeignTableName()));
-                    templateString = templateString.replaceAll("FOREIGN_TABLE_OBJECT", GeneratorUtils.firstLatterToLowercase(column.getForeignTableName()) + "_"
-                            + column.getCamelColumnName());
+                    templateString = templateString.replaceAll("FOREIGN_TABLE_OBJECT", getForeignObjectName(column));
 
                     returnValue.add(templateString);
                 }
@@ -381,11 +383,11 @@ public class ReplaceReactPlaceholders {
 
         if (codeLine.contains(ReactGeneratorConstant.APPLICATION_SIDEBAR_ITEMS)) {
             for (Table table : tables.values()) {
-                returnList.add("ability.can(\"" + table.getTableName().toUpperCase() + "_READ\", \"" + table.getTableName().toUpperCase() + "_READ\") &&");
+                returnList.add("if(ability.can(\"" + table.getTableName().toUpperCase() + "_READ\", \"" + table.getTableName().toUpperCase() + "_READ\")) {");
                 returnList.add("sideBarLinks.push({");
                 returnList.add("key: \"" + table.getTableName() + "\",");
                 returnList.add("path: APPLICATION_ROUTES." + table.getTableName().toUpperCase() + ",");
-                returnList.add("});");
+                returnList.add("});}");
             }
         }
 

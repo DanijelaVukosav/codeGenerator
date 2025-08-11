@@ -8,10 +8,10 @@ import { useParams } from "react-router-dom";
 import { #{FUL_TABLE_NAME}#Modal } from "../components/#{FUL_TABLE_NAME}#Modal";
 import { SinglePageWrapper } from "../../../generalComponents";
 
-type #{FUL_TABLE_NAME}#PageProps = {
+interface #{FUL_TABLE_NAME}#PageProps {
   objectId?: string | number;
   simpleView?: boolean;
-};
+}
 
 export const #{FUL_TABLE_NAME}#Page: React.FC<#{FUL_TABLE_NAME}#PageProps> = (props) => {
   const { id } = useParams<{ id: string }>();

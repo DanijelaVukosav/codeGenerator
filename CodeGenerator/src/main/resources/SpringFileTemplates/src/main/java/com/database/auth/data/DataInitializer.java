@@ -1,7 +1,7 @@
-package com.shop.api.auth.data;
+package com.#{ALL_SCHEMA_NAME}#.api.auth.data;
 
-import com.shop.api.auth.models.User;
-import com.shop.api.auth.repository.UserRepository;
+import com.#{ALL_SCHEMA_NAME}#.api.auth.models.User;
+import com.#{ALL_SCHEMA_NAME}#.api.auth.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

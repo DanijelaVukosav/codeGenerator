@@ -2,6 +2,15 @@ import * as React from "react";
 import { FC, ReactNode } from "react";
 import "../../styles/form.css";
 
+export const GLOBAL_BOX_STYLE = {
+    width: '70vw',
+    height: '70vh',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    overflow: 'auto'
+};
+
 export const FormContainer: FC<{
   children: ReactNode;
 }> = ({ children }) => {
@@ -23,7 +32,7 @@ export const FormTitle: FC<{ title: string }> = ({ title }) => {
   );
 };
 
-export const FormSubmitButton: FC<{ label: string; onClick: any }> = ({ label, onClick }) => {
+export const FormSubmitButton: FC<{ label: string; onClick: () => void }> = ({ label, onClick }) => {
   return (
     <button title={label} className="submit_button" onClick={onClick}>
       <span>{label}</span>

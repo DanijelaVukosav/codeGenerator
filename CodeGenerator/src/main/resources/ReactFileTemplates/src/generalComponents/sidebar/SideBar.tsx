@@ -7,7 +7,7 @@ import { useAbility } from "../../router/casl/AbilityContext";
 import { useUser } from "../../authService/UserProvider";
 import ThemeToggle from "./ThemeToggle";
 
-type SideBarLink = {
+interface SideBarLink {
   key: string;
   path: string;
 };
@@ -21,7 +21,7 @@ export const SideBar: React.FC = () => {
   const links: SideBarLink[] = useMemo(() => {
     const sideBarLinks: SideBarLink[] = [];
     #{APPLICATION_SIDEBAR_ITEMS}#
-    user?.superUser && sideBarLinks.push({ key: "system_users", path: APPLICATION_ROUTES.SYSTEM_USERS });
+    if(user?.superUser) { sideBarLinks.push({ key: "system_users", path: APPLICATION_ROUTES.SYSTEM_USERS });}
     return sideBarLinks;
   }, [ability, user?.superUser]);
 

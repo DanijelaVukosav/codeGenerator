@@ -1,6 +1,6 @@
 import * as React from "react";
-import { createContext, FC, useCallback, useEffect, useState } from "react";
-import { SystemUser } from "../../authService/types";
+import { createContext, FC, ReactElement, useCallback, useEffect, useState } from "react";
+import { SystemUser, SystemUserPermission } from "../../authService/types";
 import { FilterCriteria, SortDirection } from "../../api/generalService/types";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -9,7 +9,7 @@ import { QueryKey, useMutation, useQuery } from "@tanstack/react-query";
 import { usePagination } from "../../hooks/usePagination";
 import { useFilterAndSort } from "../../hooks/useFilterAndSort";
 
-export type SystemUsersContextType = {
+export interface SystemUsersContextType {
   isReady: boolean;
   hasError: boolean;
   filteredObjects: SystemUser[] | undefined;
@@ -54,9 +54,9 @@ export const SystemUserContext = createContext<SystemUsersContextType>({
   closeUserModal: () => {},
 });
 
-type SystemUserProps = {
-  children: string | JSX.Element;
-};
+interface SystemUserProps {
+  children: string | ReactElement;
+}
 
 export const SystemUsersContextProvider: FC<SystemUserProps> = ({ children }) => {
   const { getData, deleteObject } = useSystemUsersService();
@@ -117,7 +117,9 @@ export const SystemUsersContextProvider: FC<SystemUserProps> = ({ children }) =>
   );
   const onSuccessDelete = useCallback(
     (id: number, isDeleted: boolean) => {
-      isDeleted && setFilteredObjects((state) => state?.filter((object) => object.id !== id));
+      if (isDeleted) {
+        setFilteredObjects((state) => state?.filter((object) => object.id !== id));
+      }
     },
     [setFilteredObjects],
   );
@@ -169,12 +171,17 @@ export const SystemUsersContextProvider: FC<SystemUserProps> = ({ children }) =>
       if (user) {
         setFilteredObjects((state) => {
           return state?.map((systemUser: SystemUser) => {
-            if (systemUser.id === user.id)
+            if (systemUser.id === user.id) {
               return {
                 ...user,
-                permissions: (user.permissions ?? []).map((permission: any) => permission.name),
+                permissions: (user.permissions as SystemUserPermission[] ?? []).map(
+                    (permission: SystemUserPermission) => permission.name
+                )
               };
-            else return systemUser;
+            }
+            else {
+              return systemUser;
+            }
           });
         });
       }

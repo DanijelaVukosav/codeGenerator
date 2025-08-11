@@ -2,6 +2,7 @@ package com.master.codegenerator.TableParser;
 
 public class UtilConstants {
     public static String TYPE_VARCHAR = "VARCHAR";
+    public static String TYPE_TEXT = "TEXT";
     public static String TYPE_CHAR = "CHAR";
     public static String TYPE_NVARCHAR = "VARCHAR";
     public static String TYPE_NCHAR = "NCHAR";

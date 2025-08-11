@@ -13,7 +13,7 @@ import { APPLICATION_ROUTES } from "../../../router/routes";
 import { QueryKey, useMutation, useQuery } from "@tanstack/react-query";
 
 
-export type #{FUL_TABLE_NAME}#ContextType = {
+export interface #{FUL_TABLE_NAME}#ContextType {
   isReady: boolean;
   hasError: boolean;
   isEnabledTableActions?: boolean;
@@ -72,7 +72,7 @@ export const #{FUL_TABLE_NAME}#Context = createContext<#{FUL_TABLE_NAME}#Context
   clearFilters: () => {},
 });
 
-type #{FUL_TABLE_NAME}#Props = {
+interface #{FUL_TABLE_NAME}#Props {
   children: React.ReactNode;
   isEnabledTableActions?: boolean;
   objectId?: string | number;
@@ -173,7 +173,7 @@ export const #{FUL_TABLE_NAME}#ContextProvider: FC<#{FUL_TABLE_NAME}#Props> = ({
         }
         return;
       }
-      isDeleted && setFilteredObjects((state) => state?.filter((object) => object.#{TABLE_PRIMARY_KEY_COLUMN}# !== id));
+      if(isDeleted) { setFilteredObjects((state) => state?.filter((object) => object.#{TABLE_PRIMARY_KEY_COLUMN}# !== id));}
     },
     [objectId, pathname, navigate, setSingleObject, setFilteredObjects],
   );

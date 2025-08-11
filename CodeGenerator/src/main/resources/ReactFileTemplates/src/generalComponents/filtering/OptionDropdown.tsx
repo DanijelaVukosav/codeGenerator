@@ -1,51 +1,69 @@
-import React, { useEffect, useState } from "react";
-import "../../styles/utils.css";
-import "../../styles/filterContainer.css";
-import { FilterCriteriaOperator } from "../../api/generalService/types";
-import { FieldValues, UseFormWatch } from "react-hook-form";
+import React, { useEffect, useState } from 'react';
+import '../../styles/utils.css';
+import '../../styles/filterContainer.css';
+import { FilterCriteriaOperator } from '../../api/generalService/types';
+import { FieldValues, UseFormWatch, UseFormSetValue, Path, PathValue } from 'react-hook-form';
 
-export const OptionDropdown: React.FC<{
-  options: FilterCriteriaOperator[];
-  id: string;
-  isDisabled?: boolean;
-  watch: UseFormWatch<FieldValues>;
-  setValue: any;
-}> = ({ id, isDisabled, options, watch, setValue }) => {
-  const [isOpen, setIsOpen] = useState(false);
+interface OptionDropdownProps<TFormValues extends FieldValues = FieldValues> {
+    options: FilterCriteriaOperator[];
+    id: Path<TFormValues>;
+    isDisabled?: boolean;
+    watch: UseFormWatch<TFormValues>;
+    setValue: UseFormSetValue<TFormValues>;
+}
 
-  const selectedOption = watch?.(`${id}.operation`);
+export const OptionDropdown = <TFormValues extends FieldValues = FieldValues>({
+    id,
+    isDisabled,
+    options,
+    watch,
+    setValue
+}: OptionDropdownProps<TFormValues>) => {
+    const [isOpen, setIsOpen] = useState(false);
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
+    const selectedObject = watch(id);
+    const selectedOption = selectedObject ? selectedObject.operation : '';
 
-  const handleOptionSelect = (option: FilterCriteriaOperator) => {
-    setValue(`${id}.operation`, option);
-    setIsOpen(false);
-  };
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
+    };
 
-  useEffect(() => {
-    if (!selectedOption) {
-      setValue(`${id}.operation`, options[0]);
-    }
-  }, [selectedOption, id, options]);
+    const handleOptionSelect = (option: FilterCriteriaOperator) => {
+        setValue(
+            `${id}.operation` as Path<TFormValues>,
+            option as PathValue<TFormValues, Path<TFormValues>>
+        );
+        setIsOpen(false);
+    };
 
-  return (
-    <div className="operation_input_wrapper">
-      <div className="select">
-        <button className="select_button" onClick={handleToggle} disabled={isDisabled}>
-          {selectedOption}
-        </button>
-        {isOpen && (
-          <ul className="select_options">
-            {options.map((option, index) => (
-              <li key={`${index}_option_${id}`} className="option" onClick={() => handleOptionSelect(option)}>
-                {option}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
+    useEffect(() => {
+        if (!selectedOption) {
+            setValue(
+                `${id}.operation` as Path<TFormValues>,
+                options[0] as PathValue<TFormValues, Path<TFormValues>>
+            );
+        }
+    }, [selectedOption, id, options, setValue]);
+
+    return (
+        <div className="operation_input_wrapper">
+            <div className="select">
+                <button className="select_button" onClick={handleToggle} disabled={isDisabled}>
+                    {selectedOption}
+                </button>
+                {isOpen && (
+                    <ul className="select_options">
+                        {options.map((option, index) => (
+                            <li
+                                key={`${index}_option_${id}`}
+                                className="option"
+                                onClick={() => handleOptionSelect(option)}>
+                                {option}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        </div>
+    );
 };
