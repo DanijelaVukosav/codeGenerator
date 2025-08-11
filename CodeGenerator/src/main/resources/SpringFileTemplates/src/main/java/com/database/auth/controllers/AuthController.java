@@ -3,17 +3,15 @@ package com.#{ALL_SCHEMA_NAME}#.api.auth.controllers;
 import com.#{ALL_SCHEMA_NAME}#.api.auth.exception.TokenRefreshException;
 import com.#{ALL_SCHEMA_NAME}#.api.auth.models.RefreshToken;
 import com.#{ALL_SCHEMA_NAME}#.api.auth.payload.request.LoginRequest;
-import com.#{ALL_SCHEMA_NAME}#.api.auth.payload.request.TokenRefreshRequest;
 import com.#{ALL_SCHEMA_NAME}#.api.auth.payload.response.JwtResponse;
 import com.#{ALL_SCHEMA_NAME}#.api.auth.payload.response.MessageResponse;
 import com.#{ALL_SCHEMA_NAME}#.api.auth.payload.response.TokenRefreshResponse;
-import com.#{ALL_SCHEMA_NAME}#.api.auth.repository.PermissionRepository;
-import com.#{ALL_SCHEMA_NAME}#.api.auth.repository.UserRepository;
 import com.#{ALL_SCHEMA_NAME}#.api.security.jwt.JwtUtils;
 import com.#{ALL_SCHEMA_NAME}#.api.security.services.RefreshTokenService;
 import com.#{ALL_SCHEMA_NAME}#.api.security.services.UserDetailsImpl;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,7 +67,7 @@ public class AuthController {
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
             cookie.setPath("/api/auth");
-            cookie.setMaxAge(7 * 24 * 60 * 60);
+            cookie.setMaxAge(24 * 60 * 60);
             response.addCookie(cookie);
 
             return ResponseEntity.ok(new JwtResponse(jwt, null, userDetails.getId(), userDetails.getUsername(),
@@ -98,7 +94,7 @@ public class AuthController {
                     cookie.setHttpOnly(true);
                     cookie.setSecure(true);
                     cookie.setPath("/api/auth");
-                    cookie.setMaxAge(7 * 24 * 60 * 60);
+                    cookie.setMaxAge(24 * 60 * 60);
                     return ResponseEntity.ok()
                             .header("Set-Cookie", cookie.toString())
                             .body(new TokenRefreshResponse(newJwt, null));
