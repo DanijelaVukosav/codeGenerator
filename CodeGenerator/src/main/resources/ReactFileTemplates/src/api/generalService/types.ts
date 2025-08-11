@@ -7,8 +7,8 @@ export type CustomAnyType =
     | null
     | CustomObjectType
     | CustomObjectType[]
-    | string[];
-
+    | string[]
+    | RegExp;
 export interface CustomObjectType {
   [key: string | number]: CustomAnyType;
 }

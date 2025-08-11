@@ -77,14 +77,10 @@ export const getFilterCriteriaArray = (data: FilterFormData): FilterCriteria[] =
                 };
             }
 
-            if (
-                currentFilter &&
-                currentFilter.value !== undefined &&
-                currentFilter.value !== null
-            ) {
+            if (currentFilter && currentFilter.value) {
                 filterCriteria.push(currentFilter);
             }
-            if (tempFilter && tempFilter.value !== undefined && tempFilter.value !== null) {
+            if (tempFilter && tempFilter.value) {
                 filterCriteria.push(tempFilter);
             }
         }

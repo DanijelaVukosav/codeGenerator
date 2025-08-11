@@ -24,6 +24,9 @@ interface FormInputFieldProps<TFormValues extends FieldValues = FieldValues> {
     min?: number;
     max?: number;
     maxLength?: number;
+    minLength?: number;
+    pattern?: string;
+    patternMessage?: string;
     options?: (string | number)[];
     isDisabled?: boolean;
     register: UseFormRegister<TFormValues>;
@@ -38,9 +41,11 @@ export const FormInputField = <TFormValues extends FieldValues = FieldValues>({
     type,
     name,
     placeholder,
-    value,
     max,
     maxLength,
+    minLength,
+    pattern,
+    patternMessage,
     options,
     isDisabled,
     register,
@@ -50,7 +55,6 @@ export const FormInputField = <TFormValues extends FieldValues = FieldValues>({
     error,
     columnOptions
 }: FormInputFieldProps<TFormValues>) => {
-    console.log(value);
     switch (type) {
         case COLUMN_TYPE.CHECKBOX: {
             return (
@@ -164,6 +168,33 @@ export const FormInputField = <TFormValues extends FieldValues = FieldValues>({
             );
         }
         default: {
+            const validationRules: CustomAnyType = {};
+
+            if (required) {
+                validationRules.required = `${label} is required!`;
+            }
+
+            if (minLength) {
+                validationRules.minLength = {
+                    value: minLength,
+                    message: `${label} must be at least ${minLength} characters long`
+                };
+            }
+
+            if (maxLength) {
+                validationRules.maxLength = {
+                    value: maxLength,
+                    message: `${label} must be at most ${maxLength} characters long`
+                };
+            }
+
+            if (pattern) {
+                validationRules.pattern = {
+                    value: new RegExp(pattern),
+                    message: patternMessage || `${label} format is invalid`
+                };
+            }
+
             return (
                 <div className="input_container">
                     <label className="input_label" htmlFor={name}>
@@ -175,14 +206,14 @@ export const FormInputField = <TFormValues extends FieldValues = FieldValues>({
                         type={type}
                         className="input_field input_padding"
                         id={name}
-                        {...register(name, { required })}
+                        {...register(name, validationRules)}
                         disabled={Boolean(isDisabled)}
                         max={max}
                         maxLength={maxLength}
+                        minLength={minLength}
                     />
-                    {error?.type === 'required' && (
-                        <FormErrorMessage message={`${label} is required!`} />
-                    )}
+
+                    {error && <FormErrorMessage message={error.message || `${label} is invalid`} />}
                 </div>
             );
         }
