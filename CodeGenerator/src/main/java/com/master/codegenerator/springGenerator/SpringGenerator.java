@@ -13,16 +13,13 @@ public class SpringGenerator {
 
     public void generateSpringApplication(HashMap<String, Table> tables, HashMap<String, ArrayList<String>> mapOfTableRelationships, String schemaName) {
         try {
-            // Kreiramo ExecutorService za pokretanje paralelnih taskova
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-            CountDownLatch latch = new CountDownLatch(tables.size());  // Latch koji čeka sve thread-ove
+            CountDownLatch latch = new CountDownLatch(tables.size());
 
-            // Kreiramo objekat za generisanje osnovnih Spring fajlova
             GenericSpringFileGenerator springFileGenerator = new GenericSpringFileGenerator(schemaName);
             springFileGenerator.copyGenericFiles(schemaName);
             springFileGenerator.replaceSchemaNameInGenericFiles(schemaName, tables);
 
-            // Pokrećemo generisanje za svaki tabelu u paralelnim threadovima
             for (Table table : tables.values()) {
                 executorService.submit(() -> {
                     try {
@@ -44,22 +41,18 @@ public class SpringGenerator {
                             fileGenerator.generateFile(genericFiles[i], filesForGenerating[i]);
                         }
                     } catch (Exception e) {
-                        // Obrada greške u thread-u
                         e.printStackTrace();
                     } finally {
-                        latch.countDown();  // Kada thread završi, smanjujemo broj čekanja na 0
+                        latch.countDown();
                     }
                 });
             }
 
-            // Čekamo da svi thread-ovi završe
             latch.await();
 
-            // Generišemo Build i Settings fajlove nakon što su svi fajlovi generisani
             GenericSpringFileGenerator.generateBuildGradleFile(schemaName, tables);
             GenericSpringFileGenerator.generateSettingsGradleFile(schemaName, tables);
 
-            // Zatvaramo ExecutorService
             executorService.shutdown();
 
         } catch (Exception e) {

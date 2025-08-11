@@ -6,9 +6,8 @@ import com.master.codegenerator.springGenerator.SpringGenerator;
 import com.master.codegenerator.utils.GeneratorUtils;
 import com.master.codegenerator.utils.ZipDirectory;
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
+import jakarta.annotation.PreDestroy;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,36 +28,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 @RestController
 public class GenerateCodeFile {
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    private final MeterRegistry meterRegistry;
-    private final Timer springGenerationTimer;
-    private final Timer reactGenerationTimer;
     private final Counter successCounter;
     private final Counter errorCounter;
 
-    private double currentSpringDuration = 0.0;
-    private double currentReactDuration = 0.0;
-    private final Gauge springIndividualMeasurements;
-    private final Gauge reactIndividualMeasurements;
-
     @Autowired
     public GenerateCodeFile(MeterRegistry meterRegistry) {
-        this.meterRegistry = meterRegistry;
-        this.springGenerationTimer = Timer.builder("generation_spring_time")
-                .description("Time taken to generate Spring application")
-                .publishPercentiles(0.5, 0.95, 0.99)
-                .publishPercentileHistogram()
-                .register(meterRegistry);
-
-        this.reactGenerationTimer = Timer.builder("generation_react_time")
-                .description("Time taken to generate React application")
-                .publishPercentiles(0.5, 0.95, 0.99)
-                .publishPercentileHistogram()
-                .register(meterRegistry);
-
         this.successCounter = Counter.builder("generation.success.count")
                 .description("Number of successful generation tasks")
                 .register(meterRegistry);
@@ -65,74 +45,72 @@ public class GenerateCodeFile {
         this.errorCounter = Counter.builder("generation.error.count")
                 .description("Number of failed generation tasks")
                 .register(meterRegistry);
-
-        this.springIndividualMeasurements = Gauge.builder("generation_spring_individual",  () -> currentSpringDuration)
-                .description("Individual spring generation measurements")
-                .register(meterRegistry);
-
-        this.reactIndividualMeasurements = Gauge.builder("generation_react_individual",  () -> currentReactDuration)
-                .description("Individual react generation measurements")
-                .register(meterRegistry);
     }
 
     @PostMapping("/download")
-    public ResponseEntity<FileSystemResource> downloadZip(@RequestBody SchemaData data) throws IOException, InterruptedException, ExecutionException {
+    public ResponseEntity<FileSystemResource> downloadZip(@RequestBody SchemaData data,
+                                                          HttpServletRequest request)
+            throws IOException, InterruptedException, ExecutionException {
+
         if (data.getDatabaseName() == null || data.getDatabaseName().isEmpty()) {
             data.setDatabaseName(GeneratorUtils.DEFAULT_SCHEMA_NAME);
         }
+
         String sourceDirPath = GeneratorUtils.getSchemaRootFolderPath(data.getDatabaseName());
         String zipFilePath = "GeneratedApps" + File.separator + data.getDatabaseName() + "Project" + ".zip";
 
         long systemStartTime = System.nanoTime();
-        Timer.Sample springSample = Timer.start(meterRegistry);
+
         CompletableFuture<Void> springTask = CompletableFuture.runAsync(() -> {
             try {
                 long startTime = System.nanoTime();
-                if(data.isEnabledBackend()) {
-                    new SpringGenerator().generateSpringApplication(data.getTables(), data.getMapOfTableRelationships(), data.getDatabaseName());
+                if (data.isEnabledBackend()) {
+                    new SpringGenerator().generateSpringApplication(
+                            data.getTables(),
+                            data.getMapOfTableRelationships(),
+                            data.getDatabaseName()
+                    );
                 }
                 long endTime = System.nanoTime();
-
-                double duration = (endTime - startTime) / 1_000_000.0; // Konverzija u milisekunde
-                currentSpringDuration = duration;
-                springSample.stop(springGenerationTimer);
-
+                double duration = (endTime - startTime) / 1_000_000.0;
                 System.out.println("Spring generation completed in " + duration + " ms");
-//                springIndividualMeasurements.set(duration);
             } catch (Exception e) {
                 errorCounter.increment();
                 throw new RuntimeException("Failed to generate Spring application", e);
             }
-        });
+        }, executor);
 
-        Timer.Sample reactSample = Timer.start(meterRegistry);
         CompletableFuture<Void> reactTask = CompletableFuture.runAsync(() -> {
             try {
                 long startTime = System.nanoTime();
-                if(data.isEnabledFrontend()) {
-                    new ReactGenerator().generateReactApplication(data.getTables(), data.getMapOfTableRelationships(), data.getDatabaseName());
+                if (data.isEnabledFrontend()) {
+                    new ReactGenerator().generateReactApplication(
+                            data.getTables(),
+                            data.getMapOfTableRelationships(),
+                            data.getDatabaseName()
+                    );
                 }
                 long endTime = System.nanoTime();
-                double duration = (endTime - startTime) / 1_000_000.0; // Konverzija u milisekunde
-                currentReactDuration = duration;
-                reactSample.stop(reactGenerationTimer);
-
+                double duration = (endTime - startTime) / 1_000_000.0;
                 System.out.println("React generation completed in " + duration + " ms");
             } catch (Exception e) {
                 errorCounter.increment();
                 throw new RuntimeException("Failed to generate React application", e);
             }
-        });
+        }, executor);
 
         CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(springTask, reactTask);
         combinedFuture.get();
-        long systemEndTime = System.nanoTime();
 
-        double systemDuration = (systemEndTime - systemStartTime) / 1_000_000.0; // Konverzija u milisekunde
+        long systemEndTime = System.nanoTime();
+        double systemDuration = (systemEndTime - systemStartTime) / 1_000_000.0;
         System.out.println("System generation completed in " + systemDuration + " ms");
 
+        // Create zip file
         File zipFile = new File(zipFilePath);
-        if (!zipFile.exists()) zipFile.createNewFile();
+        if (!zipFile.exists()) {
+            zipFile.createNewFile();
+        }
 
         ZipDirectory.zipDirectory(sourceDirPath, zipFilePath);
 
@@ -147,16 +125,32 @@ public class GenerateCodeFile {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
 
+        // Mark file for cleanup after response is sent
+        request.setAttribute("fileToDelete", zipFilePath);
+
         successCounter.increment();
 
-//         Optional: Cleanup after zipping
-         try {
-             FileUtils.deleteDirectory(new File(sourceDirPath));
-             System.out.println("Directory deleted successfully.");
-         } catch (IOException e) {
-             System.err.println("Failed to delete directory: " + e.getMessage());
-         }
+        // Cleanup source directory immediately
+        try {
+            FileUtils.deleteDirectory(new File(sourceDirPath));
+            System.out.println("Source directory deleted successfully.");
+        } catch (IOException e) {
+            System.err.println("Failed to delete source directory: " + e.getMessage());
+        }
 
         return response;
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 }
