@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as toastr from 'toastr';
 import { createContext, FC, ReactElement, useCallback, useEffect, useState } from "react";
 import { SystemUser, SystemUserPermission } from "../../authService/types";
 import { FilterCriteria, SortDirection } from "../../api/generalService/types";
@@ -8,6 +9,7 @@ import { useSystemUsersService } from "./SystemUserService";
 import { QueryKey, useMutation, useQuery } from "@tanstack/react-query";
 import { usePagination } from "../../hooks/usePagination";
 import { useFilterAndSort } from "../../hooks/useFilterAndSort";
+import { AxiosError } from 'axios';
 
 export interface SystemUsersContextType {
   isReady: boolean;
@@ -124,9 +126,15 @@ export const SystemUsersContextProvider: FC<SystemUserProps> = ({ children }) =>
     [setFilteredObjects],
   );
 
+  const onErrorDelete = useCallback((error: AxiosError) => {
+    const resMessage = error?.message || 'Failed to delete object.';
+    toastr.error(resMessage);
+  }, []);
+
   const deleteSystemUser = useMutation({
     mutationFn: (id: number) => deleteObject(id),
     onSuccess: (_data, variables, _context) => onSuccessDelete(variables, true),
+    onError: onErrorDelete
   });
 
   const onDeleteSystemUser = useCallback(
