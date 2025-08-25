@@ -1,5 +1,5 @@
 {
-  "name": "firstapp",
+  "name": "react-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -42,7 +42,7 @@
     "eject": "react-scripts eject",
     "format": "prettier --write . --config ./.prettierrc",
     "format-check": "prettier --check . --config ./.prettierrc",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "lint-check": "eslint 'src/**/*.{js,jsx,ts,tsx}'"
   },
   "eslintConfig": {
@@ -72,6 +72,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.3",
-    "eslint-plugin-react": "^7.37.5"
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-unused-imports": "^4.1.4"
   }
 }

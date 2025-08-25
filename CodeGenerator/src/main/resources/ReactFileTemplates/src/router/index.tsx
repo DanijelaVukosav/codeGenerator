@@ -34,7 +34,7 @@ const AppIndex = () => {
             }),
           };
 
-          ability.update(userWithRoles.can as any);
+          ability.update(userWithRoles.can);
           login(user.data);
         }
       } catch (error) {

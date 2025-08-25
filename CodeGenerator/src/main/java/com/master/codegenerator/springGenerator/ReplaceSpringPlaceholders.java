@@ -230,11 +230,11 @@ public class ReplaceSpringPlaceholders {
                         "            nullable = false,\n" +
                         "            updatable = false\n" +
                         "    )\n" +
-                        "    private LocalDateTime createDate;\n" +
+                        "    private LocalDateTime createdAt;\n" +
                         "\n" +
                         "    @LastModifiedDate\n" +
                         "    @Column(insertable = false)\n" +
-                        "    private LocalDateTime lastModified;\n" +
+                        "    private LocalDateTime updatedAt;\n" +
                         "\n" +
                         "\n" +
                         "    @CreatedBy\n" +
@@ -246,25 +246,25 @@ public class ReplaceSpringPlaceholders {
                         "\n" +
                         "    @LastModifiedBy\n" +
                         "    @Column(insertable = false)\n" +
-                        "    private String lastModifiedBy;");
+                        "    private String updatedBy;");
             }
             codeLine = "";
         } else if (codeLine.contains(SpringGeneratorConstant.MODEL_AUDIT_SETTERS_AND_GETTERS)) {
             if(table.getHasTableAudit()) {
-                finalCodeLines.add("public LocalDateTime getCreateDate() {\n" +
-                        "        return createDate;\n" +
+                finalCodeLines.add("public LocalDateTime getCreatedAt() {\n" +
+                        "        return createdAt;\n" +
                         "    }\n" +
                         "\n" +
-                        "    public void setCreateDate(LocalDateTime createDate) {\n" +
-                        "        this.createDate = createDate;\n" +
+                        "    public void setCreatedAt(LocalDateTime createdAt) {\n" +
+                        "        this.createdAt = createdAt;\n" +
                         "    }\n" +
                         "\n" +
-                        "    public LocalDateTime getLastModified() {\n" +
-                        "        return lastModified;\n" +
+                        "    public LocalDateTime getUpdatedAt() {\n" +
+                        "        return updatedAt;\n" +
                         "    }\n" +
                         "\n" +
-                        "    public void setLastModified(LocalDateTime lastModified) {\n" +
-                        "        this.lastModified = lastModified;\n" +
+                        "    public void setUpdatedAt(LocalDateTime updatedAt) {\n" +
+                        "        this.updatedAt = updatedAt;\n" +
                         "    }\n" +
                         "\n" +
                         "    public String getCreatedBy() {\n" +
@@ -275,12 +275,12 @@ public class ReplaceSpringPlaceholders {
                         "        this.createdBy = createdBy;\n" +
                         "    }\n" +
                         "\n" +
-                        "    public String getLastModifiedBy() {\n" +
-                        "        return lastModifiedBy;\n" +
+                        "    public String getUpdatedBy() {\n" +
+                        "        return updatedBy;\n" +
                         "    }\n" +
                         "\n" +
-                        "    public void setLastModifiedBy(String lastModifiedBy) {\n" +
-                        "        this.lastModifiedBy = lastModifiedBy;\n" +
+                        "    public void setUpdatedBy(String updatedBy) {\n" +
+                        "        this.updatedBy = updatedBy;\n" +
                         "    }\n");
             }
             codeLine = "";

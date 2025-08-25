@@ -18,7 +18,7 @@ module.exports = {
     parserOptions: {
         project: ['./tsconfig.json']
     },
-    plugins: ['@typescript-eslint', 'react', 'import'],
+    plugins: ['@typescript-eslint', 'react', 'import', 'unused-imports'],
     rules: {
         'prettier/prettier': ['error', {}, { usePrettierrc: true }], // Use our .prettierrc file as source
 
@@ -26,6 +26,20 @@ module.exports = {
         'react/jsx-props-no-spreading': 'off',
         'react/require-default-props': 'off',
         'react/jsx-pascal-case': 'error',
+
+        // Unused imports rules
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+        'unused-imports/no-unused-imports': 'error',
+        'unused-imports/no-unused-vars': [
+            'warn',
+            {
+                vars: 'all',
+                varsIgnorePattern: '^_',
+                args: 'after-used',
+                argsIgnorePattern: '^_',
+            },
+        ],
 
         '@typescript-eslint/naming-convention': [
             'error',
@@ -39,7 +53,7 @@ module.exports = {
                 format: ['PascalCase'],
                 custom: { regex: '^I[A-Z]', match: false },
                 filter: {
-                    regex: '^I(Arguments|TextWriter|O([A-Z][a-z]+[A-Za-z]*)?)$',
+                    regex: '^I(Arguments|ITextWriter|IO([A-Z][a-z]+[A-Za-z]*)?)$',
                     match: false
                 }
             },
@@ -85,10 +99,6 @@ module.exports = {
             { selector: 'property', format: null }
         ],
 
-        '@typescript-eslint/no-unused-vars': [
-            'off',
-            { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }
-        ],
         '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 
         'no-duplicate-imports': 'off',
@@ -139,7 +149,6 @@ module.exports = {
         'prefer-object-spread': 'error',
         'space-in-parens': 'error',
         'unicode-bom': ['error', 'never'],
-        'use-isnan': 'error',
-        'no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+        'use-isnan': 'error'
     }
 };
